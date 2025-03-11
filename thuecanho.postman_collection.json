@@ -1,0 +1,961 @@
+{
+	"info": {
+		"_postman_id": "6f41bba8-d93e-4867-8320-06aa1f33ba27",
+		"name": "thuecanho",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "34561103"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzJhNWYzNTdhODk5ZjdjMzA3YjgzZGUiLCJyb2xlIjoyLCJpYXQiOjE3MzA4MzE1NTYsImV4cCI6MTczMDgzNTE1Nn0.TN7AWFvfqDL8p9ivmXr6qSXtpT_86I5fqyZlOENoQj8"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"anhanh7@gmail.com\",\r\n    \"password\":\"anhanh\",\r\n    \"fullName\":\"Hoang Do\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3001/api/auth/register"
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzJhNWYzNTdhODk5ZjdjMzA3YjgzZGUiLCJyb2xlIjoyLCJpYXQiOjE3MzA4MzE1NTYsImV4cCI6MTczMDgzNTE1Nn0.TN7AWFvfqDL8p9ivmXr6qSXtpT_86I5fqyZlOENoQj8"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"anhanh5@gmail.com\",\r\n    \"password\":\"anhanh\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3001/api/auth/login"
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwicm9sZSI6MCwidGltZXN0YW1wIjoxNzMxMjE4MDE3Mjg2LCJpYXQiOjE3MzEyMTgwMTcsImV4cCI6MTczMTIxOTgxN30._nVXxhiu5rIFmzC-grQfxc_ZNK1t6JtiCsnu-SEgXQs"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "4",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"anhanh2@gmail.com\",\r\n    \"password\":\"anhanh\",\r\n    \"fullName\":\"Hoang Do\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3001/api/auth/logout"
+					},
+					"response": []
+				},
+				{
+					"name": "renewToken",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzJhNWYzNTdhODk5ZjdjMzA3YjgzZGUiLCJyb2xlIjoyLCJpYXQiOjE3MzA4MzE1NTYsImV4cCI6MTczMDgzNTE1Nn0.TN7AWFvfqDL8p9ivmXr6qSXtpT_86I5fqyZlOENoQj8"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "4",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"anhanh2@gmail.com\",\r\n    \"password\":\"anhanh\",\r\n    \"fullName\":\"Hoang Do\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3001/api/auth/renew"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "getAll",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidGltZXN0YW1wIjoxNzMxNTg2MDkzMDA2LCJpYXQiOjE3MzE1ODYwOTMsImV4cCI6MTczMTU4Nzg5M30.ExPeGsNs8ZrNtfkin4Z-MzAnIlDsG2xPUGQYtlFfU5c"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"anhanh2@gmail.com\",\r\n    \"password\":\"anhanh\",\r\n    \"fullName\":\"Hoang Do\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3001/api/user"
+					},
+					"response": []
+				},
+				{
+					"name": "me",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwidGltZXN0YW1wIjoxNzMxNTg2MDU4MjExLCJpYXQiOjE3MzE1ODYwNTgsImV4cCI6MTczMTU4Nzg1OH0.LRWGznZgvqOOOznVM6JIu9t1fIUI-S3YhGm2p3ffqwY"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "4",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"anhanh2@gmail.com\",\r\n    \"password\":\"anhanh\",\r\n    \"fullName\":\"Hoang Do\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3001/api/user/me"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "apartment",
+			"item": [
+				{
+					"name": "admin",
+					"item": [
+						{
+							"name": "publish",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidGltZXN0YW1wIjoxNzMxNTg2MDkzMDA2LCJpYXQiOjE3MzE1ODYwOTMsImV4cCI6MTczMTU4Nzg5M30.ExPeGsNs8ZrNtfkin4Z-MzAnIlDsG2xPUGQYtlFfU5c"
+									}
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-client-id",
+										"value": "1",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"apart_area\": 400,\r\n    \"apart_description\": \"test 100\",\r\n    \"apart_images\": [\r\n        {\r\n            \"img_url\": \"test9\",\r\n            \"img_alt\": \"test\"\r\n        },\r\n        {\r\n            \"img_url\": \"test9\",\r\n            \"img_alt\": \"test1\"\r\n        }\r\n    ],\r\n    \"apart_city\": 1,\r\n    \"apart_district\": 1,\r\n    \"apart_ward\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:3001/api/apartment/publish/4"
+							},
+							"response": []
+						},
+						{
+							"name": "unpublish",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidGltZXN0YW1wIjoxNzMxNTg2MDkzMDA2LCJpYXQiOjE3MzE1ODYwOTMsImV4cCI6MTczMTU4Nzg5M30.ExPeGsNs8ZrNtfkin4Z-MzAnIlDsG2xPUGQYtlFfU5c"
+									}
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-client-id",
+										"value": "1",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"apart_area\": 400,\r\n    \"apart_description\": \"test 100\",\r\n    \"apart_images\": [\r\n        {\r\n            \"img_url\": \"test9\",\r\n            \"img_alt\": \"test\"\r\n        },\r\n        {\r\n            \"img_url\": \"test9\",\r\n            \"img_alt\": \"test1\"\r\n        }\r\n    ],\r\n    \"apart_city\": 1,\r\n    \"apart_district\": 1,\r\n    \"apart_ward\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:3001/api/apartment/unpublish/4"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "seller",
+					"item": [
+						{
+							"name": "create apartment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywidGltZXN0YW1wIjoxNzMxMjQ3MTc1NTQyLCJpYXQiOjE3MzEyNDcxNzUsImV4cCI6MTczMTI0ODk3NX0.w8Tyb7_tF17VlLGGeHGEFT8XII8rZYjDFnc4JPbL9kg"
+									}
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-client-id",
+										"value": "3",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"apart_title\": \"test\",\r\n    \"apart_total_toilet\": 1,\r\n    \"apart_total_room\": 2,\r\n    \"apart_area\": 200,\r\n    \"apart_description\": \"test 1\",\r\n    \"apart_images\": [\r\n        {\r\n            \"img_url\": \"test\",\r\n            \"img_alt\": \"test\"\r\n        },\r\n        {\r\n            \"img_url\": \"test1\",\r\n            \"img_alt\": \"test1\"\r\n        },\r\n        {\r\n            \"img_url\": \"test2\",\r\n            \"img_alt\": \"test2\"\r\n        }\r\n    ],\r\n    \"apart_city\": 1,\r\n    \"apart_district\": 1,\r\n    \"apart_ward\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:3001/api/apartment/"
+							},
+							"response": []
+						},
+						{
+							"name": "update apartment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywidGltZXN0YW1wIjoxNzMxMjM1OTY4MTMyLCJpYXQiOjE3MzEyMzU5NjgsImV4cCI6MTczMTIzNzc2OH0.H5It0p-qUC5Xpqu_koxZ1kOHmHdgWS_jjX-lFnlNYCY"
+									}
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "x-client-id",
+										"value": "3",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"apart_area\": 400,\r\n    \"apart_description\": \"test 100\",\r\n    \"apart_images\": [\r\n        {\r\n            \"img_url\": \"test9\",\r\n            \"img_alt\": \"test\"\r\n        },\r\n        {\r\n            \"img_url\": \"test9\",\r\n            \"img_alt\": \"test1\"\r\n        }\r\n    ],\r\n    \"apart_city\": 1,\r\n    \"apart_district\": 1,\r\n    \"apart_ward\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:3001/api/apartment/2"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "guest Search",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidGltZXN0YW1wIjoxNzMxMjUyODgwOTY5LCJpYXQiOjE3MzEyNTI4ODAsImV4cCI6MTczMTI1NDY4MH0.-u7tHxyzYX1YB2mzZ1YrUrQE6dxbRfMo6QblB2UydTo"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/apartment/g/search?apart_area=lt_500&apart_isPublished=false&usr_id=3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"apartment",
+								"g",
+								"search"
+							],
+							"query": [
+								{
+									"key": "apart_area",
+									"value": "lt_500"
+								},
+								{
+									"key": "apart_isPublished",
+									"value": "false"
+								},
+								{
+									"key": "usr_id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "auth Search",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidGltZXN0YW1wIjoxNzMxNTg2MDkzMDA2LCJpYXQiOjE3MzE1ODYwOTMsImV4cCI6MTczMTU4Nzg5M30.ExPeGsNs8ZrNtfkin4Z-MzAnIlDsG2xPUGQYtlFfU5c"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:3001/api/apartment/a/search"
+					},
+					"response": []
+				},
+				{
+					"name": "getApartment by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidGltZXN0YW1wIjoxNzMxNTg2MDkzMDA2LCJpYXQiOjE3MzE1ODYwOTMsImV4cCI6MTczMTU4Nzg5M30.ExPeGsNs8ZrNtfkin4Z-MzAnIlDsG2xPUGQYtlFfU5c"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:3001/api/apartment/4"
+					},
+					"response": []
+				},
+				{
+					"name": "delete apartment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidGltZXN0YW1wIjoxNzMxNTg2MDkzMDA2LCJpYXQiOjE3MzE1ODYwOTMsImV4cCI6MTczMTU4Nzg5M30.ExPeGsNs8ZrNtfkin4Z-MzAnIlDsG2xPUGQYtlFfU5c"
+							}
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:3001/api/apartment/4"
+					},
+					"response": []
+				},
+				{
+					"name": "my",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidGltZXN0YW1wIjoxNzMxNDA4MTcyNjU1LCJpYXQiOjE3MzE0MDgxNzIsImV4cCI6MTczMTQwOTk3Mn0.3ySqIYdGF-90nitEASEcYyTfLGDUiCWLSGPhrOpPiSY"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "2",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": "http://localhost:3001/api/apartment/my"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "RentRequest",
+			"item": [
+				{
+					"name": "search Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwidGltZXN0YW1wIjoxNzMxNTc5NjA4NzgxLCJpYXQiOjE3MzE1Nzk2MDgsImV4cCI6MTczMTU4MTQwOH0.J_Hv_kZAxf2n-YDy_G8wC8pWWkTivoRXqlSwM87Uf80"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "4",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:3001/api/requests/"
+					},
+					"response": []
+				},
+				{
+					"name": "create Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywidGltZXN0YW1wIjoxNzMxNDI1Njk5NDkxLCJpYXQiOjE3MzE0MjU2OTksImV4cCI6MTczMTQyNzQ5OX0.EWEw92qaZp_Q_VVm9AXHTQHWZpP4rcudeuN3vqXmbgw"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "3",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"apart_id\":2,\r\n    \"appointmentTime\": 1731426017539\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3001/api/requests"
+					},
+					"response": []
+				},
+				{
+					"name": "update Status",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidGltZXN0YW1wIjoxNzMxMzI0MDY0OTgyLCJpYXQiOjE3MzEzMjQwNjQsImV4cCI6MTczMTMyNTg2NH0.o16zJaEkzdEMwS0_Ic1LJzAYgFUuSb3iDf-mdbUduac"
+							}
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "2",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"apart_id\":2,\r\n    \"appointmentTime\":1731308785938\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/requests/status/9?status=3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"requests",
+								"status",
+								"9"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update Time",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywidGltZXN0YW1wIjoxNzMxMzI1MDcyMTUwLCJpYXQiOjE3MzEzMjUwNzIsImV4cCI6MTczMTMyNjg3Mn0.Zeqe9N0XUVPB9abpbEGsSUVyUw131gunGfrC7cCQWE0"
+							}
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "3",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"apart_id\":2,\r\n    \"appointmentTime\":1731308785938\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/requests/time/6?appointmentTime=1731324384345",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"requests",
+								"time",
+								"6"
+							],
+							"query": [
+								{
+									"key": "appointmentTime",
+									"value": "1731324384345"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Comment",
+			"item": [
+				{
+					"name": "search Comment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywidGltZXN0YW1wIjoxNzMxNDI1Njk5NDkxLCJpYXQiOjE3MzE0MjU2OTksImV4cCI6MTczMTQyNzQ5OX0.EWEw92qaZp_Q_VVm9AXHTQHWZpP4rcudeuN3vqXmbgw"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "3",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:3001/api/comments"
+					},
+					"response": []
+				},
+				{
+					"name": "get Comment by Apartment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywidGltZXN0YW1wIjoxNzMxNDI1Njk5NDkxLCJpYXQiOjE3MzE0MjU2OTksImV4cCI6MTczMTQyNzQ5OX0.EWEw92qaZp_Q_VVm9AXHTQHWZpP4rcudeuN3vqXmbgw"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "3",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:3001/api/comments/2"
+					},
+					"response": []
+				},
+				{
+					"name": "create Comment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywidGltZXN0YW1wIjoxNzMxNDI1Njk5NDkxLCJpYXQiOjE3MzE0MjU2OTksImV4cCI6MTczMTQyNzQ5OX0.EWEw92qaZp_Q_VVm9AXHTQHWZpP4rcudeuN3vqXmbgw"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "3",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"cmt_content\":\"Chat luong\",\r\n    \"cmt_rate\":4\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3001/api/comments/2"
+					},
+					"response": []
+				},
+				{
+					"name": "update Comment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidGltZXN0YW1wIjoxNzMxNDI2MzI1MzY4LCJpYXQiOjE3MzE0MjYzMjUsImV4cCI6MTczMTQyODEyNX0.xpb60FwBkTpAArJyLpdvWqojDW6XqptH4AFKtdhKqPI"
+							}
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"apart_id\":2,\r\n    \"appointmentTime\":1731308785938\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/comments/1?status=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"comments",
+								"1"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete Comment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywidGltZXN0YW1wIjoxNzMxMzI1MDcyMTUwLCJpYXQiOjE3MzEzMjUwNzIsImV4cCI6MTczMTMyNjg3Mn0.Zeqe9N0XUVPB9abpbEGsSUVyUw131gunGfrC7cCQWE0"
+							}
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "3",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"apart_id\":2,\r\n    \"appointmentTime\":1731308785938\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3001/api/comments/1"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ticket",
+			"item": [
+				{
+					"name": "search ticket",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwidGltZXN0YW1wIjoxNzMxNTg2NDA3NTU3LCJpYXQiOjE3MzE1ODY0MDcsImV4cCI6MTczMTU4ODIwN30.Q_8vEryYm8VgigD5zm6VABltx2-5s0WGuX-ljtoFp_U"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "5",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:3001/api/ticket"
+					},
+					"response": []
+				},
+				{
+					"name": "get Ticket by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwidGltZXN0YW1wIjoxNzMxNTg2NDA3NTU3LCJpYXQiOjE3MzE1ODY0MDcsImV4cCI6MTczMTU4ODIwN30.Q_8vEryYm8VgigD5zm6VABltx2-5s0WGuX-ljtoFp_U"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "5",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:3001/api/ticket/2"
+					},
+					"response": []
+				},
+				{
+					"name": "ticket",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwidGltZXN0YW1wIjoxNzMxNTg2NDA3NTU3LCJpYXQiOjE3MzE1ODY0MDcsImV4cCI6MTczMTU4ODIwN30.Q_8vEryYm8VgigD5zm6VABltx2-5s0WGuX-ljtoFp_U"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "5",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ticket_title\":\"Minh bi mat tien\",\r\n    \"ticket_content\":\"Deo vui roi\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3001/api/ticket"
+					},
+					"response": []
+				},
+				{
+					"name": "reply ticket",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwidGltZXN0YW1wIjoxNzMxNTg2NDA3NTU3LCJpYXQiOjE3MzE1ODY0MDcsImV4cCI6MTczMTU4ODIwN30.Q_8vEryYm8VgigD5zm6VABltx2-5s0WGuX-ljtoFp_U"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "5",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"message\":\"Minh da ho tro roi ban nheg afasff afsasf\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3001/api/ticket/3/reply"
+					},
+					"response": []
+				},
+				{
+					"name": "update status ticket",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwidGltZXN0YW1wIjoxNzMxNDgwNDc0MzU5LCJpYXQiOjE3MzE0ODA0NzQsImV4cCI6MTczMTQ4MjI3NH0.P1jiyQFJWU3RAqz0mjpgpcwjzsIpFxb1pkwXalcAL4s"
+							}
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "5",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"apart_id\":2,\r\n    \"appointmentTime\":1731308785938\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/ticket/1?status=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"ticket",
+								"1"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cancel ticket",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywidGltZXN0YW1wIjoxNzMxNDgxMjI4MjMzLCJpYXQiOjE3MzE0ODEyMjgsImV4cCI6MTczMTQ4MzAyOH0.ijp1iG_HAUyGa3ebabRWtPq83R3gbVS_8YCqKNcxpdI"
+							}
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-client-id",
+								"value": "3",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"apart_id\":2,\r\n    \"appointmentTime\":1731308785938\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3001/api/ticket/3/cancel"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
