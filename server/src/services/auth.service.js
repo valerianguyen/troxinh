@@ -8,12 +8,15 @@ const { apiResponse } = require("../utils/response");
 const TokenService = require("./tokens.service");
 const { generateTokenPair } = require("../utils/generateToken");
 const EmailService = require("./email.service");
+const { Op } = require("sequelize");
+const { ENUM_TYPE_ORDER } = require("../constant/index.js");
 class AuthService {
-	static async register({ email, password, fullName }) {
-		if (!email || !password || !fullName) {
-			throw new BadRequestError("Thiếu một số trường quan trọng");
-		}
-		const user = await User.findOne({ where: { usr_email: email } });
+	static async register({ email, password, fullName, phone }) {
+		const user = await User.findOne({
+			where: {
+				[Op.or]: [{ usr_email: email }, { usr_phone: phone }],
+			},
+		});
 		if (user) {
 			throw new BadRequestError("Tài khoản đã được đăng ký");
 		}
@@ -22,6 +25,7 @@ class AuthService {
 			usr_email: email,
 			usr_password: bcrypt.hashSync(password, 10),
 			usr_name: fullName,
+			usr_phone: phone,
 		});
 		const tokens = await TokenService.createToken({
 			usr_id: newUser.usr_id,

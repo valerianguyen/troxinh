@@ -1,4 +1,5 @@
-import axiosClient from "./axiosClient";
+import axiosClient from './axiosClient';
+
 export default class UserApi {
 	static me() {
 		return axiosClient.get('user/me');
@@ -7,7 +8,7 @@ export default class UserApi {
 		return axiosClient.get('/user/', { params });
 	}
 	static getUserById(id) {
-		return axiosClient.get(`/user/${id}`);
+		return axiosClient.get(`/user/profile/${id}`);
 	}
 	static findUser(params) {
 		return axiosClient.post('/user/find', params);

@@ -45,7 +45,7 @@ export default function Ticket() {
 	});
 	const submitCancel = async (userId, ticket_id) => {
 		const res = await TicketApi.cancelTicket(ticket_id);
-		if (res.status === 200) {
+		if (res?.status === 200) {
 			setTickets((prev) =>
 				prev.map((ticket) =>
 					ticket_id === ticket.ticket_id
@@ -62,7 +62,7 @@ export default function Ticket() {
 		const res = await TicketApi.updateTicketStatus(ticket_id, {
 			status: ENUM_STATUS_TICKET.DONE,
 		});
-		if (res.status === 200) {
+		if (res?.status === 200) {
 			setTickets((prev) =>
 				prev.map((ticket) =>
 					ticket_id === ticket.ticket_id
@@ -79,7 +79,7 @@ export default function Ticket() {
 		const res = await TicketApi.updateTicketStatus(ticket_id, {
 			status: ENUM_STATUS_TICKET.REJECTED,
 		});
-		if (res.status === 200) {
+		if (res?.status === 200) {
 			setTickets((prev) =>
 				prev.map((ticket) =>
 					ticket_id === ticket.ticket_id
@@ -96,7 +96,7 @@ export default function Ticket() {
 	useEffect(() => {
 		const fetchTickets = async () => {
 			const response = await TicketApi.searchTicket(filter);
-			if (response.status === 200) {
+			if (response?.status === 200) {
 				setTickets(response.metadata.data.tickets);
 				setTotal(response.metadata.data.totalCount);
 			}
@@ -105,7 +105,7 @@ export default function Ticket() {
 	}, [filter.page]);
 	const handleFilter = async () => {
 		const response = await TicketApi.searchTicket(filter);
-		if (response.status === 200) {
+		if (response?.status === 200) {
 			setTickets(response.metadata.data.tickets);
 			setTotal(response.metadata.data.totalCount);
 			setFilter({ ...filter, page: 1 });
@@ -122,7 +122,7 @@ export default function Ticket() {
 	const submit = async (values, { setSubmitting }) => {
 		setSubmitting(true);
 		const res = await TicketApi.createTicket(values);
-		if (res.status === 201) {
+		if (res?.status === 201) {
 			toast.success("Tạo phiếu hỗ trợ thành công", {
 				duration: 1000,
 			});
@@ -239,7 +239,7 @@ export default function Ticket() {
 								{user.usr_role === ENUM_ROLE.STAFF && (
 									<TableCell className="min-w-[200px]">
 										<NavLink
-											to={"/user/profile/" + ticket.user.usr_id}
+											to={"/profile/" + ticket.user.usr_id}
 											className="flex items-center gap-3"
 										>
 											<div className="size-14 rounded-full border border-gray-300 overflow-hidden">

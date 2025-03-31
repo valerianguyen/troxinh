@@ -97,7 +97,7 @@ export default function RevenueChart() {
 	useEffect(() => {
 		async function getRevenue(params) {
 			const res = await OrderApi.calculateRevenue(params);
-			if (res.status === 200) {
+			if (res?.status === 200) {
 				setRevenue(res.metadata.data);
 			}
 		}
@@ -140,7 +140,7 @@ export default function RevenueChart() {
 	};
 
 	return (
-		<div className="space-y-4 container mx-auto">
+		<div className="space-y-4 h-full flex flex-col px-4 py-3">
 			<div className="flex flex-col sm:flex-row justify-between gap-4">
 				<h2 className="text-lg font-semibold">Biểu đồ lợi nhuận</h2>
 				<div className="flex flex-col sm:flex-row gap-2">

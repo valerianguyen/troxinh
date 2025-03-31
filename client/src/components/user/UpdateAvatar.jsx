@@ -1,21 +1,22 @@
-import UserApi from "@/api/user.api";
-import { Button } from "@/components/ui/button";
-import axios from "axios";
+import { useState } from 'react';
+
+import axios from 'axios';
+import { Loader2 } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { toast } from 'sonner';
+
+import UserApi from '@/api/user.api';
+import { Button } from '@/components/ui/button';
 import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
-import { login } from "@/lib/features/user/userSlice";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
-import { config } from "@/utils";
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { login } from '@/lib/features/user/userSlice';
+import { config } from '@/utils';
 
 export function UpdateAvatar() {
 	const [image, setImage] = useState(null);
@@ -36,7 +37,7 @@ export function UpdateAvatar() {
 			usr_avatar: secure_url,
 		});
 
-		if (res.status === 200) {
+		if (res?.status === 200) {
 			toast.success("Update avatar success",{
 				duration: 1000,
 			});

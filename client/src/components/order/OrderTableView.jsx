@@ -38,7 +38,7 @@ export default function OrderTableView() {
 		const fetchOrder = async () => {
 			if (filter?.order_status === -2) delete filter.order_status;
 			const response = await OrderApi.getOrders(filter);
-			if (response.status === 200) {
+			if (response?.status === 200) {
 				setOrders(response.metadata.data.orders);
 				setTotal(response.metadata.data.totalCount);
 			}
@@ -48,7 +48,7 @@ export default function OrderTableView() {
 	const handleFilter = async () => {
 		if (filter?.order_status === -2) delete filter.order_status;
 		const response = await OrderApi.getOrders(filter);
-		if (response.status === 200) {
+		if (response?.status === 200) {
 			setOrders(response.metadata.data.orders);
 			setTotal(response.metadata.data.totalCount);
 			setFilter({ ...filter, page: 1 });
@@ -56,8 +56,8 @@ export default function OrderTableView() {
 	};
 
 	return (
-		<div className="p-4 container mx-auto">
-			<div className="flex flex-wrap gap-3 md:flex-row flex-col">
+		<div className="h-full flex flex-col px-4 py-3">
+			<div className="flex flex-wrap gap-3 md:flex-row flex-col py-3">
 				<div className="flex-1 w-full">
 					<input
 						type="text"
@@ -104,7 +104,7 @@ export default function OrderTableView() {
 				</div>
 			</div>
 
-			<div className="overflow-auto">
+			<div className="overflow-auto flex-1">
 				<Table className={"mt-3"}>
 					<TableHeader>
 						<TableRow>

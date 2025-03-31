@@ -13,7 +13,7 @@ function ProtectedRoute() {
 	return (
 		<>
 			<Header />
-			<main className="mt-14 bg-[#FBF8EF] pt-6 px-4">
+			<main className="mt-14 pt-6 px-4">
 				<Outlet />
 			</main>
 			<Footer />

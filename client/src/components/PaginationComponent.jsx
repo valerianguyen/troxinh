@@ -18,7 +18,7 @@ import { cn } from '@/lib/utils';
 export default function PaginationComponent({ total, filter, setFilter }) {
 	if(!total) return null;
 	return (
-		<div className="my-5">
+		<div className="mt-5">
 			<Pagination>
 				<PaginationContent>
 					<PaginationItem>

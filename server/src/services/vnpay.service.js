@@ -3,6 +3,7 @@ const sequelize = require("../dbs/init.mysql");
 const vnpay = require("../dbs/init.vnpay");
 const Apartment = require("../models/apartment.model");
 const Order = require("../models/order.model");
+const VerifyApartment = require("../models/verifyApartment.model");
 class VNPService {
 	// createPaymentUrl method
 	// return url
@@ -56,7 +57,6 @@ class VNPService {
 				),
 			),
 		};
-		// update status apartment
 		try {
 			if (status.isSuccess && status.isValid) {
 				const dataUpdate = {};
@@ -70,13 +70,27 @@ class VNPService {
 						dataUpdate.apart_expired_date = new Date(jsonData.newEndDate);
 						dataUpdate.apart_time_start = new Date();
 						break;
+					case ENUM_TYPE_ORDER.PAY_FOR_VERIFY_APARTMENT:
+						// at here if order is success create a verify apartment
+						await VerifyApartment.create(
+							{
+								apart_id: order.order_apart_id,
+								ver_usr_id: order.order_usr_id,
+							},
+							{ transaction },
+						);
+						break;
 					default:
 						break;
 				}
-				await Apartment.update(dataUpdate, {
-					where: { apart_id: order.order_apart_id },
-					transaction,
-				});
+				if (Object.keys(dataUpdate).length > 0) {
+					await Apartment.update(dataUpdate, {
+						where: {
+							apart_id: order.order_apart_id,
+						},
+						transaction,
+					});
+				}
 			}
 			await order.update(updateData, {
 				transaction,

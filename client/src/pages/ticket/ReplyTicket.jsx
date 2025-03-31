@@ -24,7 +24,7 @@ export default function ReplyTicket() {
 	useEffect(() => {
 		const fetchTicket = async () => {
 			const response = await TicketApi.getTicketById(ticketId);
-			if (response.status === 200) {
+			if (response?.status === 200) {
 				setTicket(response.metadata.data);
 			}
 		};
@@ -38,7 +38,7 @@ export default function ReplyTicket() {
 		const res = await TicketApi.replyTicket(ticketId, {
 			message: inputMessage,
 		});
-		if (res.status === 201) {
+		if (res?.status === 201) {
 			setTicket((prev) => ({
 				...prev,
 				replies: [...prev.replies, res.metadata.data],

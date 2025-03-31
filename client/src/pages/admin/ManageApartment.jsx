@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/table';
 import {
   ENUM_ACTION,
+  ENUM_STATUS_APARTMENT,
   ENUM_STRING_PRIORY,
   ENUM_STRING_STATUS_APARTMENT,
 } from '@/constant';
@@ -37,7 +38,7 @@ export default function ManageApartment() {
 	});
 	const submitDelete = async (userId, apart_id) => {
 		const res = await ApartmentApi.deleteApartment(apart_id);
-		if (res.status === 200) {
+		if (res?.status === 200) {
 			setApartments((prev) => prev.filter((apart) => apart.apart_id !== apart_id));
 			toast.success("Xóa tin đăng thành công", {
 				duration: 1000,
@@ -46,7 +47,7 @@ export default function ManageApartment() {
 	};
 	const submitPublish = async (userId, apart_id) => {
 		const res = await ApartmentApi.publishApartment(userId, apart_id);
-		if (res.status === 200) {
+		if (res?.status === 200) {
 			setApartments((prev) =>
 				prev.map((apart) => (apart.apart_id === apart_id ? { ...apart, apart_status: 1 } : apart)),
 			);
@@ -55,26 +56,33 @@ export default function ManageApartment() {
 			});
 		}
 	};
-	// const submitUnPublish = async (userId, apart_id) => {
-	// 	const res = await ApartmentApi.unPublishApartment(userId, apart_id);
-	// 	if (res.status === 200) {
-	// 		setApartments((prev) =>
-	// 			prev.map((apart) => (apart.apart_id === apart_id ? { ...apart, apart_status: 0 } : apart)),
-	// 		);
-	// 		toast.success("Gỡ công khai tin đăng thành công", {
-	// 			duration: 1000,
-	// 		});
-	// 	}
-	// };
+
 	const submitBlock = async (userId, apart_id, reason) => {
 		const res = await ApartmentApi.blockApartment(userId, apart_id, reason);
-		if (res.status === 200) {
+		if (res?.status === 200) {
 			setApartments((prev) =>
 				prev.map((apart) =>
-					apart.apart_id === apart_id ? { ...apart, apart_status: 2, apart_report_reason: reason } : apart,
+					apart.apart_id === apart_id
+						? { ...apart, apart_status: ENUM_STATUS_APARTMENT.BLOCK, apart_report_reason: reason }
+						: apart,
 				),
 			);
 			toast.success("Block tin đăng thành công", {
+				duration: 1000,
+			});
+		}
+	};
+	const submitUnBlock = async (userId, apart_id) => {
+		const res = await ApartmentApi.unBlockApartment(userId, apart_id);
+		if (res?.status === 200) {
+			setApartments((prev) =>
+				prev.map((apart) =>
+					apart.apart_id === apart_id
+						? { ...apart, apart_status: ENUM_STATUS_APARTMENT.ACTIVE, apart_report_reason: null }
+						: apart,
+				),
+			);
+			toast.success("Mở block tin đăng thành công", {
 				duration: 1000,
 			});
 		}
@@ -84,7 +92,7 @@ export default function ManageApartment() {
 		const fetchApartment = async () => {
 			if (filter?.apart_status === -1) delete filter.apart_status;
 			const response = await ApartmentApi.searchApartment(filter);
-			if (response.status === 200) {
+			if (response?.status === 200) {
 				setApartments(response.metadata.data.apartments);
 				setTotal(response.metadata.data.totalCount);
 			}
@@ -94,7 +102,7 @@ export default function ManageApartment() {
 	const handleFilter = async () => {
 		if (filter?.apart_status === -1) delete filter.apart_status;
 		const response = await ApartmentApi.searchApartment(filter);
-		if (response.status === 200) {
+		if (response?.status === 200) {
 			setApartments(response.metadata.data.apartments);
 			setTotal(response.metadata.data.totalCount);
 			setFilter({ ...filter, page: 1 });
@@ -102,8 +110,8 @@ export default function ManageApartment() {
 	};
 
 	return (
-		<div className="p-4 container mx-auto">
-			<div className="flex flex-wrap gap-3">
+		<div className="h-full flex flex-col px-4 py-3">
+			<div className="flex flex-wrap gap-3 py-3">
 				<div className="flex-1 w-full sm:min-w-[300px]">
 					<input
 						type="text"
@@ -125,9 +133,11 @@ export default function ManageApartment() {
 						className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
 					>
 						<option value="-1">Tất cả</option>
-						<option value="1">Đã được duyệt</option>
-						<option value="0">Chưa thanh toán</option>
-						<option value="2">Đã khóa</option>
+						{Object.values(ENUM_STATUS_APARTMENT).map((key) => (
+							<option key={key} value={key}>
+								{ENUM_STRING_STATUS_APARTMENT[key]}
+							</option>
+						))}
 					</select>
 				</div>
 				<div className="flex gap-3">
@@ -139,8 +149,7 @@ export default function ManageApartment() {
 					</Button>
 				</div>
 			</div>
-
-			<div className="h-[calc(100vh-225px)] overflow-auto">
+			<div className="overflow-hidden flex-1">
 				<Table className={"mt-3"}>
 					<TableHeader>
 						<TableRow>
@@ -175,10 +184,12 @@ export default function ManageApartment() {
 								</TableCell>
 								<TableCell className="min-w-[150px]">
 									<span>
-										{apartment.apart_expired_date ? formatDistance(new Date(apartment.apart_expired_date),new Date(), {
-											addSuffix: true,
-											locale: vi,
-										}) : "Trọn đời"}
+										{apartment.apart_expired_date
+											? formatDistance(new Date(apartment.apart_expired_date), new Date(), {
+													addSuffix: true,
+													locale: vi,
+											  })
+											: "Trọn đời"}
 									</span>
 								</TableCell>
 								<TableCell>{toLocaleString(apartment.createdAt).slice(9)}</TableCell>
@@ -216,9 +227,21 @@ export default function ManageApartment() {
 									</TableCell>
 								) : (
 									<TableCell>
-										<div className='flex items-center gap-2'>
-											<Badge className="bg-red-500">Lý do khóa</Badge>
-											<p>{apartment.apart_report_reason}</p>
+										<div className="flex items-center gap-2">
+											<ActionDialog
+												action={ENUM_ACTION.UNBLOCK}
+												title={`bài đăng ${apartment.apart_title}`}
+												color={"bg-blue-400"}
+												submit={submitUnBlock}
+												id={apartment.apart_id}
+												userId={apartment.user.usr_id}
+											/>
+											<div className="flex items-center gap-2">
+												<Badge className="bg-red-500 ">
+													<span className="w-max inline-block">Lý do khóa</span>
+												</Badge>
+												<p className="w-32 break-words">{apartment.apart_report_reason}</p>
+											</div>
 										</div>
 									</TableCell>
 								)}

@@ -14,6 +14,13 @@ import { BannerSlider } from '@/components/BannerSlider';
 import EmptyListPage from '@/components/Empty';
 import PaginationComponent from '@/components/PaginationComponent';
 import { RealEstateRegions } from '@/components/RealEstateEegions';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export default function Home() {
 	const [apartments, setApartments] = useState(null);
@@ -38,7 +45,7 @@ export default function Home() {
 					...cleanedFilter,
 				});
 
-				if (response.status === 200) {
+				if (response?.status === 200) {
 					const { apartments: apartmentData, totalCount } = response.metadata.data;
 					setApartments(apartmentData);
 					setTotal(totalCount);
@@ -60,7 +67,7 @@ export default function Home() {
 		const cleanedFilter = { ...filter };
 		try {
 			const response = await fetchApartments(cleanedFilter);
-			if (response.status === 200) {
+			if (response?.status === 200) {
 				const { apartments: apartmentData, totalCount } = response.metadata.data;
 				setApartments(apartmentData);
 				setTotal(totalCount);
@@ -75,14 +82,46 @@ export default function Home() {
 	return (
 		<div className="container mx-auto">
 			<BannerSlider />
-			<RealEstateRegions filter={filter} setFilter={setFilter} handleFilter={handleFilter}/>
-			<div className="mt-8 flex gap-4 flex-col sm:flex-row">
-				<aside className="sm:w-[300px] w-full flex-grow-0 flex-shrink-0 flex flex-col gap-3">
+			<RealEstateRegions filter={filter} setFilter={setFilter} handleFilter={handleFilter} />
+			<div className="mt-4 flex gap-4 flex-col md:flex-row">
+				<aside className="md:w-[300px] w-full flex-grow-0 flex-shrink-0 flex flex-col gap-3">
 					<SearchFilter filter={filter} setFilter={setFilter} onFilter={handleFilter} />
 				</aside>
 				<article className="flex-1" ref={articleRef}>
 					{apartments?.length > 0 ? (
 						<>
+							<div className="mb-6 flex md:items-center justify-between md:flex-row flex-col items-start gap-3">
+								<div>
+									<h3 className="text-xl font-semibold">Bất động sản nổi bật</h3>
+									<p className="text-muted-foreground">
+										Khám phá những bất động sản được đánh giá cao
+									</p>
+								</div>
+								<div className="flex items-center gap-2">
+									<Select
+										defaultValue="newest"
+										onValueChange={(value) => {
+											if (value === "newest") {
+												handleFilter({ ...filter, orderType: "desc" });
+											} else {
+												const [orderBy, orderType] = value.split("-");
+												handleFilter({ ...filter, orderBy, orderType });
+											}
+										}}
+									>
+										<SelectTrigger className="w-[180px]">
+											<SelectValue placeholder="Sắp xếp theo" />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="newest">Mới nhất</SelectItem>
+											<SelectItem value="apart_price-asc">Giá tăng dần</SelectItem>
+											<SelectItem value="apart_price-desc">Giá giảm dần</SelectItem>
+											<SelectItem value="apart_area-asc">Diện tích tăng dần</SelectItem>
+											<SelectItem value="apart_area-desc">Diện tích giảm dần</SelectItem>
+										</SelectContent>
+									</Select>
+								</div>
+							</div>
 							<ListApartments apartments={apartments} total={total} />
 							<PaginationComponent total={total} filter={filter} setFilter={setFilter} />
 						</>

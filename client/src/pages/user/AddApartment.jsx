@@ -34,7 +34,7 @@ export default function AddApartment() {
 					}
 				})(),
 			});
-			if (res.status === 201) {
+			if (res?.status === 201) {
 				window.open(res.metadata.data.payment_url, "_self");
 			} else {
 				console.log(res);

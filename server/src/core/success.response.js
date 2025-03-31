@@ -25,7 +25,7 @@ class SuccessResponse {
 			res.cookie(name, value, {
 				maxAge,
 				httpOnly: true,
-				secure: false,
+				secure: true,
 				sameSite: "none",
 				path: "/"
 			});
@@ -33,7 +33,7 @@ class SuccessResponse {
 		return this;
 	}
 	send(res, header = {}) {
-		return res.status(this.status).json(this);
+		return res?.status(this.status).json(this);
 	}
 }
 

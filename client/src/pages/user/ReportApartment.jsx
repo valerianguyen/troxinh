@@ -1,5 +1,3 @@
-"use client";
-
 import React, {
   useEffect,
   useState,
@@ -47,10 +45,10 @@ const GROUP = {
 	},
 	user: {
 		header: ["Người dùng", "Email"],
-		expand: ["Tiêu đề tin đăng", "Mô tả tin đăng", "Nội dung báo cáo", "Ngày báo cáo"],
+		expand: ["Tiêu đề tin đăng", "Nội dung báo cáo", "Ngày báo cáo"],
 	},
 	apartment: {
-		header: ["Tiêu đề tin đăng", "Mô tả tin đăng", "Người đăng"],
+		header: ["Tiêu đề tin đăng", "Người đăng"],
 		expand: ["Nội dung báo cáo", "Người báo cáo", "Ngày báo cáo"],
 	},
 };
@@ -80,7 +78,7 @@ export default function ReportApartment() {
 			const res = await ReportApartmentApi.searchReport({
 				filter,
 			});
-			if (res.status === 200) {
+			if (res?.status === 200) {
 				setData({
 					none: {
 						data: res.metadata.data.reports,
@@ -94,7 +92,7 @@ export default function ReportApartment() {
 				const res = await ReportApartmentApi.groupByUserId({
 					filter,
 				});
-				if (res.status === 200) {
+				if (res?.status === 200) {
 					setData((prev) => ({
 						...prev,
 						user: {
@@ -110,7 +108,7 @@ export default function ReportApartment() {
 				const res = await ReportApartmentApi.groupByApartmentId({
 					filter,
 				});
-				if (res.status === 200) {
+				if (res?.status === 200) {
 					setData((prev) => ({
 						...prev,
 						apartment: {
@@ -214,7 +212,7 @@ export default function ReportApartment() {
 														</Button>
 														{groupBy === "user" ? (
 															<>
-																<NavLink to={`/user/profile/${item.usr_id}`}>
+																<NavLink to={`/profile/${item.usr_id}`}>
 																	<Avatar
 																		size={10}
 																		usr_avatar={item.usr_avatar}
@@ -236,10 +234,7 @@ export default function ReportApartment() {
 												) : (
 													<>
 														<TableCell>
-															<span className="line-clamp-1">{item.apart_description}</span>
-														</TableCell>
-														<TableCell>
-															<NavLink to={`/user/profile/${item.user.usr_id}`}>
+															<NavLink to={`/profile/${item.user.usr_id}`}>
 																<Avatar
 																	size={10}
 																	usr_avatar={item.user.usr_avatar}
@@ -262,7 +257,7 @@ export default function ReportApartment() {
 													</NavLink>
 												</TableCell>
 												<TableCell>
-													<NavLink to={`/user/profile/${item.user.usr_id}`}>
+													<NavLink to={`/profile/${item.user.usr_id}`}>
 														<Avatar
 															size={10}
 															usr_avatar={item.user.usr_avatar}
@@ -296,13 +291,17 @@ export default function ReportApartment() {
 																	<TableRow key={index}>
 																		{groupBy === "user" ? (
 																			<>
-																				<TableCell>{report.apartment.apart_title}</TableCell>
 																				<TableCell>
-																					<span className="line-clamp-1">
-																						{report.apartment.apart_description}
-																					</span>
+																					<NavLink
+																						className="line-clamp-1 w-40"
+																						to={`/apartment/${report.apartment.apart_id}`}
+																					>
+																						{report.apartment.apart_title}
+																					</NavLink>
 																				</TableCell>
-																				<TableCell>{report.report_content}</TableCell>
+																				<TableCell>
+																					<span className='inline-block max-w-40 break-words'>{report.report_content}</span>
+																				</TableCell>
 																				<TableCell>
 																					<span className="w-max inline-block">
 																						{formatTimeAgo(report.createdAt)}
@@ -311,9 +310,11 @@ export default function ReportApartment() {
 																			</>
 																		) : (
 																			<>
-																				<TableCell>{report.report_content}</TableCell>
 																				<TableCell>
-																					<NavLink to={`/user/profile/${report.user.usr_id}`}>
+																					<span>{report.report_content}</span>
+																				</TableCell>
+																				<TableCell>
+																					<NavLink to={`/profile/${report.user.usr_id}`}>
 																						<Avatar
 																							size={10}
 																							usr_avatar={report.user.usr_avatar}

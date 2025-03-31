@@ -10,6 +10,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
+import AuthApi from '@/api/auth.api';
 import { Button } from '@/components/ui/button';
 import {
   Tabs,

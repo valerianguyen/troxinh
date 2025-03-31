@@ -18,14 +18,14 @@ export function ActionDialog({ action, title, color, submit, id, userId }) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button className={`${color} min-w-20`}>{toCapitalized(ENUM_STRING_ACTION[action])}</Button>
+				<Button className={`${color}`}>{toCapitalized(ENUM_STRING_ACTION[action])}</Button>
 			</DialogTrigger>
 			<DialogContent
 				className="sm:max-w-[425px] flex flex-col rounded-md"
 				aria-describedby={undefined}
 			>
 				<DialogHeader className="mb-4">
-					<DialogTitle className="font-normal">
+					<DialogTitle className="font-normal break-words">
 						Bạn có muốn {ENUM_STRING_ACTION[action]} <span className="font-semibold">{title}</span> không?
 					</DialogTitle>
 				</DialogHeader>

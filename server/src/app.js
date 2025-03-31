@@ -7,8 +7,12 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const app = express();
 const sequelize = require("./dbs/init.mysql");
+const { CLIENT_URL } = require("./configs");
+const createAdmin = require("./helpers/createAdmin");
 const allowedOrigins = [
 	'http://localhost:5173',
+	'http://localhost:4173',
+	CLIENT_URL,
 ];
 
 const corsOptions = {
@@ -55,7 +59,7 @@ sequelize
 // routes/userRoutes.js
 
 app.use("/api/", require("./routes"));
-
+createAdmin(); // Create admin account if it doesn't exist
 
 app.use((req, res, next) => {
 	const error = new Error("Not found");
@@ -71,6 +75,6 @@ app.use((error, req, res, next) => {
 	};
 	console.error(error.stack);
 	if (process.env.NODE_ENV === "dev") errorResponse.stack = error.stack;
-	return res.status(statusCode).json(errorResponse);
+	return res?.status(statusCode).json(errorResponse);
 });
 module.exports = app;

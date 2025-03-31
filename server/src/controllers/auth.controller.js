@@ -4,8 +4,8 @@ const { SUCCESS, CREATED } = require("../core/success.response");
 
 class AuthController {
 	static async register(req, res) {
-		const { email, password, fullName } = req.body;
-		const result = await AuthService.register({ email, password, fullName });
+		const { email, password, fullName, phone } = req.body;
+		const result = await AuthService.register({ email, password, fullName, phone });
 		const { accessToken, refreshToken } = result.data.tokens;
 		delete result.data.tokens;
 		return new CREATED({

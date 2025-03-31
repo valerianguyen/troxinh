@@ -35,7 +35,7 @@ export default function ManageUser() {
 	});
 	const submitBan = async (userId, _) => {
 		const res = await UserApi.banUser(userId);
-		if (res.status === 200) {
+		if (res?.status === 200) {
 			setUsers((prev) =>
 				prev.map((user) => (userId === user.usr_id ? { ...user, usr_role: ENUM_ROLE.BAN } : user)),
 			);
@@ -46,7 +46,7 @@ export default function ManageUser() {
 	};
 	const submitStaff = async (userId, _) => {
 		const res = await UserApi.changeRoleStaff(userId);
-		if (res.status === 200) {
+		if (res?.status === 200) {
 			setUsers((prev) =>
 				prev.map((user) =>
 					userId === user.usr_id ? { ...user, usr_role: ENUM_ROLE.STAFF } : user,
@@ -61,7 +61,7 @@ export default function ManageUser() {
 	useEffect(() => {
 		const fetchUsers = async () => {
 			const response = await UserApi.getAllUsers(filter);
-			if (response.status === 200) {
+			if (response?.status === 200) {
 				setUsers(response.metadata.data.users);
 				setTotal(response.metadata.data.totalCount);
 			}
@@ -70,7 +70,7 @@ export default function ManageUser() {
 	}, [filter.page]);
 	const handleFilter = async () => {
 		const response = await UserApi.getAllUsers(filter);
-		if (response.status === 200) {
+		if (response?.status === 200) {
 			setUsers(response.metadata.data.users);
 			setTotal(response.metadata.data.totalCount);
 			setFilter({ ...filter, page: 1 });
@@ -78,7 +78,7 @@ export default function ManageUser() {
 	};
 
 	return (
-		<div className="p-4 container mx-auto">
+		<div className="h-full flex flex-col px-4 py-3">
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
 				<div className="flex-1 w-full">
 					<input
@@ -184,7 +184,7 @@ export default function ManageUser() {
 					{users?.map((user) => (
 						<TableRow key={user.usr_id}>
 							<TableCell className="min-w-[200px]">
-								<NavLink to={"/user/profile/" + user.usr_id} className="flex items-center gap-3">
+								<NavLink to={"/profile/" + user.usr_id} className="flex items-center gap-3">
 									<div className="size-14 rounded-full border border-gray-300 overflow-hidden">
 										<img
 											className="size-full object-contain"

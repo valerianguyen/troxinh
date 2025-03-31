@@ -46,4 +46,13 @@ export default class ApartmentApi {
 	static getConfigAmountPriority() {
 		return axiosClient.get("apartment/boost/config");
 	}
+	static payApartment(apart_id) {
+		return axiosClient.post(`apartment/pay/${apart_id}`);
+	}
+	static unBlockApartment(userId, apart_id) {
+		return axiosClient.post(`apartment/unblock/${userId}/${apart_id}`);
+	}
+	static verifyApartment(apart_id) {
+		return axiosClient.post(`apartment/verify/${apart_id}`);
+	}
 }

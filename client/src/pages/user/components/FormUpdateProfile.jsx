@@ -29,7 +29,7 @@ export default function FormUpdateProfile({ user, isHydrated }) {
 		try {
 			delete values.usr_email;
 			const result = await UserApi.updateUser(values);
-			if (result.status === 200) {
+			if (result?.status === 200) {
 				dispatch(login(result.metadata.data));
 				toast.success("Cập nhật thông tin thành công", {
 					duration: 1000,

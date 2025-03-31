@@ -36,75 +36,37 @@ function UserMenu({ user }) {
 	return (
 		<div className="shadow-xl divide-y rounded-lg overflow-hidden w-44 absolute right-0 pt-2 z-40 top-full container">
 			<ul className="text-sm bg-white">
-				<li>
-					<NavLink to="/user/me" className="block px-4 py-2 hover:bg-gray-100">
-						Quản lý tài khoản
-					</NavLink>
-				</li>
-				<li>
-					<NavLink
-						to={`/${
-							[ENUM_ROLE.ADMIN, ENUM_ROLE.STAFF].includes(user.usr_role) ? "admin" : "user"
-						}/apartment`}
-						className="block px-4 py-2 hover:bg-gray-100"
-					>
-						Quản lý tin đăng
-					</NavLink>
-				</li>
-				<li>
-					<NavLink
-						to={`/${
-							[ENUM_ROLE.ADMIN, ENUM_ROLE.STAFF].includes(user.usr_role) ? "admin" : "user"
-						}/orders`}
-						className="block px-4 py-2 hover:bg-gray-100"
-					>
-						Quản lý đơn hàng
-					</NavLink>
-				</li>
+				{[ENUM_ROLE.USER].includes(user.usr_role) && (
+					<>
+						<li>
+							<NavLink to="/user/me" className="block px-4 py-2 hover:bg-gray-100">
+								Quản lý tài khoản
+							</NavLink>
+						</li>
+						<li>
+							<NavLink to={`/user/apartment`} className="block px-4 py-2 hover:bg-gray-100">
+								Quản lý tin đăng
+							</NavLink>
+						</li>
+						<li>
+							<NavLink to={`/user/verify-apartment`} className="block px-4 py-2 hover:bg-gray-100">
+								Quản lý yêu cầu xác thực tin đăng
+							</NavLink>
+						</li>
 
-				{[ENUM_ROLE.ADMIN, ENUM_ROLE.STAFF].includes(user.usr_role) && (
-					<>
 						<li>
-							<NavLink to="/admin/users" className="block px-4 py-2 hover:bg-gray-100">
-								Quản lý người dùng
-							</NavLink>
-						</li>
-						<li>
-							<NavLink to="/admin/comment" className="block px-4 py-2 hover:bg-gray-100">
-								Quản lý bình luận
-							</NavLink>
-						</li>
-						<li>
-							<NavLink to="/admin/report" className="block px-4 py-2 hover:bg-gray-100">
-								Quản lý báo cáo
-							</NavLink>
-						</li>
-						<li>
-							<NavLink to="/admin/blacklist-word" className="block px-4 py-2 hover:bg-gray-100">
-								Quản lý từ cấm
-							</NavLink>
-						</li>
-						<li>
-							<NavLink to="/admin/revenue" className="block px-4 py-2 hover:bg-gray-100">
-								Lợi nhuận
+							<NavLink to={`/user/orders`} className="block px-4 py-2 hover:bg-gray-100">
+								Quản lý đơn hàng
 							</NavLink>
 						</li>
 					</>
 				)}
-				{[ENUM_ROLE.STAFF, ENUM_ROLE.USER].includes(user.usr_role) && (
-					<>
-						<li>
-							<NavLink to="/ticket" className="block px-4 py-2 hover:bg-gray-100">
-								{user.usr_role == ENUM_ROLE.STAFF ? "Quản lý phiếu hỗ trợ" : "Phiếu hỗ trợ của tôi"}
-							</NavLink>
-						</li>
-						<li>
-							<NavLink to="/saved" className="block px-4 py-2 hover:bg-gray-100">
-								Tin đã lưu
-							</NavLink>
-						</li>
-					</>
-				)}
+
+				<li>
+					<NavLink to="/saved" className="block px-4 py-2 hover:bg-gray-100">
+						Tin đã lưu
+					</NavLink>
+				</li>
 				<li>
 					<button
 						onClick={handleLogout}
@@ -155,14 +117,29 @@ function NavigateAuth({ user }) {
 	return (
 		<div className="flex-center gap-2">
 			<NavLink
-				to="/user/apartment/add"
-				className={
-					"flex-center gap-2 text-sm font-medium text-gray-900 hover:text-gray-500 p-2 rounded-lg"
-				}
-			>
-				<SquarePen size={20} />
-				<span className="hidden md:block">Đăng tin</span>
-			</NavLink>
+					to="/blog/"
+					className="flex-center gap-2 text-sm font-medium text-gray-900 hover:text-gray-500 p-2 rounded-lg"
+				>
+					Tin tức
+				</NavLink>
+			{ENUM_ROLE.USER === user.usr_role ? (
+				<NavLink
+					to="/user/apartment/add"
+					className={
+						"flex-center gap-2 text-sm font-medium text-gray-900 hover:text-gray-500 p-2 rounded-lg"
+					}
+				>
+					<SquarePen size={20} />
+					<span className="hidden md:block">Đăng tin</span>
+				</NavLink>
+			) : (
+				<NavLink
+					to="/admin/"
+					className="flex-center gap-2 text-sm font-medium text-gray-900 hover:text-gray-500 p-2 rounded-lg"
+				>
+					Dashboard
+				</NavLink>
+			)}
 			<div
 				className="flex-center relative cursor-pointer"
 				onPointerLeave={handlePointerLeave} // Close menu when pointer leaves
@@ -177,11 +154,12 @@ function NavigateAuth({ user }) {
 						aria-expanded={isOpenMenu} // Accessibility
 						aria-label="User menu"
 					>
-						<img src={user?.usr_avatar} alt="User avatar" className="w-8 h-8 rounded-full" />
+						<img
+							src={user?.usr_avatar}
+							alt="User avatar"
+							className="w-8 h-8 rounded-full object-cover"
+						/>
 					</button>
-					<p className="text-sm font-medium text-gray-900 focus:outline-none hidden md:block">
-						{user?.usr_name}
-					</p>
 				</div>
 				{isOpenMenu && <UserMenu user={user} />}
 			</div>

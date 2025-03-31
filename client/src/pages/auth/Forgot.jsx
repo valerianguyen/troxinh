@@ -32,7 +32,7 @@ export default function Forgot() {
 			return;
 		}
 		const response = await AuthApi.forgotPassword({ email });
-		if (response.status === 200) {
+		if (response?.status === 200) {
 			toast.success(`Một email đã được gửi đến ${email} của bạn. Vui lòng kiểm tra email của bạn`);
 			navigate("/auth/login");
 		} else {

@@ -57,14 +57,14 @@ export default function FavoriteItemsList() {
 	const [loading, setLoading] = useState(true);
 	const toggleFavorite = async (id) => {
 		const res = await FavoriteApi.removeFavoriteApartment(id);
-		if (res.status === 200) {
+		if (res?.status === 200) {
 			setItems(items.filter((item) => item.apartment.apart_id !== id));
 		}
 	};
 	useEffect(() => {
 		const fetchFavoriteItems = async () => {
 			const response = await FavoriteApi.searchFavoriteApartment();
-			if (response.status === 200) {
+			if (response?.status === 200) {
 				setItems(response.metadata.data.favorites);
 			}
 		};

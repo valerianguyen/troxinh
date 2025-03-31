@@ -22,7 +22,7 @@ export default function EditApartment() {
 	useEffect(() => {
 		const fetchApartment = async () => {
 			const response = await ApartmentApi.getApartmentById(apart_id);
-			if (response.status === 200) {
+			if (response?.status === 200) {
 				setApartment(response.metadata.data);
 			}
 		};
@@ -58,7 +58,7 @@ export default function EditApartment() {
 				}
 			})(),
 		});
-		if (res.status === 200) {
+		if (res?.status === 200) {
 			toast.success("Cập nhật tin đăng thành công", {
 				duration: 1000,
 			});

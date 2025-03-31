@@ -50,7 +50,10 @@ const ApartmentForm = ({ method = "add", submit, initValues = {} }) => {
 			.min(1, "Phải có ít nhất 1 phòng"),
 		apart_area: Yup.number().required("Diện tích là bắt buộc").positive("Diện tích phải lớn hơn 0"),
 		apart_description: Yup.string().required("Mô tả là bắt buộc"),
-		apart_images: Yup.array().min(1, "Ít nhất 1 hình ảnh").required("Hình ảnh là bắt buộc"),
+		apart_images: Yup.array()
+			.min(1, "Ít nhất 1 hình ảnh")
+			.required("Hình ảnh là bắt buộc")
+			.max(5, "Nhiều nhất 5 hình ảnh"),
 		apart_city: Yup.number().required("Tỉnh/Thành phố là bắt buộc"),
 		apart_district: Yup.number().required("Quận/Huyện là bắt buộc"),
 		apart_ward: Yup.number().required("Phường/Xã là bắt buộc"),
@@ -65,7 +68,7 @@ const ApartmentForm = ({ method = "add", submit, initValues = {} }) => {
 		);
 		const fetchData = async () => {
 			const response = await BlacklistWordApi.getBlacklistWord();
-			if (response.status === 200) {
+			if (response?.status === 200) {
 				setBlacklistData(response.metadata.data);
 			}
 		};
@@ -88,6 +91,14 @@ const ApartmentForm = ({ method = "add", submit, initValues = {} }) => {
 				", ",
 			)}`;
 		}
+		if (values.apart_images.length > 5) {
+			errors.apart_images = "Nhiều nhất 5 hình ảnh";
+		}
+		values.apart_images.forEach((image, index) => {
+			if (!image) {
+				errors.apart_images = "Hình ảnh không được để trống";
+			}
+		})
 
 		if (!resultTitle.isSafe) {
 			errors.apart_title = `Tiêu đề không được chứa các từ: ${resultTitle.bannedWords.join(", ")}`;
@@ -326,6 +337,10 @@ const ApartmentForm = ({ method = "add", submit, initValues = {} }) => {
 														onChange={(event) => {
 															const file = event.target.files[0];
 															const blobUrl = URL.createObjectURL(file);
+															if (values.apart_images.length > 5) {
+																setFieldError("apart_images", "Nhiều nhất 5 hình ảnh");
+																return;
+															}
 															setFieldValue(`apart_file_images`, [
 																...values.apart_file_images,
 																file,
@@ -372,7 +387,13 @@ const ApartmentForm = ({ method = "add", submit, initValues = {} }) => {
 							</div>
 							<button
 								type="button"
-								onClick={() => setFieldValue("apart_images", [...values.apart_images, undefined])}
+								onClick={() => {
+									if (values.apart_images.length >= 5) {
+										setFieldError("apart_images", "Nhiều nhất 5 hình ảnh");
+										return;
+									}
+									setFieldValue("apart_images", [...values.apart_images, undefined]);
+								}}
 								className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
 							>
 								Thêm hình ảnh

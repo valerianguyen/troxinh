@@ -37,7 +37,7 @@ export function FormPassword() {
 		try {
 			delete values.usr_email;
 			const result = await AuthApi.changePassword(values);
-			if (result.status === 200) {
+			if (result?.status === 200) {
 				await AuthApi.logout();
 				localStorage.removeItem("accessToken");
 				dispatch(logout());

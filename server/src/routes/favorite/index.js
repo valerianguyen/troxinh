@@ -9,22 +9,18 @@ const router = express.Router();
 router.use(authentication);
 router.post(
 	"/:apart_id",
-	checkRole([ENUM_ROLE.USER, ENUM_ROLE.STAFF]),
 	asyncHandler(FavoriteController.storeFavoriteApartment),
 );
 router.delete(
 	"/:apart_id",
-	checkRole([ENUM_ROLE.USER, ENUM_ROLE.STAFF]),
 	asyncHandler(FavoriteController.removeFavoriteApartment),
 );
 router.get(
 	"/",
-	checkRole([ENUM_ROLE.USER, ENUM_ROLE.STAFF]),
 	asyncHandler(FavoriteController.searchFavoriteApartment),
 );
 router.get(
 	"/:apart_id",
-	checkRole([ENUM_ROLE.USER, ENUM_ROLE.STAFF]),
 	asyncHandler(FavoriteController.getFavoriteApartment),
 );
 module.exports = router;

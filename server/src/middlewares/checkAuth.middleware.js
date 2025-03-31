@@ -1,6 +1,11 @@
 "use strict";
 const { ENUM_ROLE } = require("../constant");
-const { AuthorizedError, NotFoundError, BadRequestError, PermissionError } = require("../core/error.response");
+const {
+	AuthorizedError,
+	NotFoundError,
+	BadRequestError,
+	PermissionError,
+} = require("../core/error.response");
 const { asyncHandler } = require("../helpers/asyncHandler");
 
 const jwt = require("jsonwebtoken");
@@ -11,14 +16,22 @@ const HEADER = {
 	CLIENT_ID: "x-client-id",
 };
 
-
 const authentication = asyncHandler(async (req, res, next) => {
 	const { [HEADER.CLIENT_ID]: userId, [HEADER.AUTHORIZATION]: authorization } = req.headers;
 	if (!userId || !authorization) throw new AuthorizedError("Xác thực thất bại");
 	const token = authorization.split(" ")[1];
-	const userDecode = await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+	let userDecode;
+	try {
+		userDecode = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+	} catch (error) {
+		console.log(error);
+		throw new AuthorizedError("Xác thực thất bại");
+	}
+	console.log(userDecode);
 	if (userId != userDecode.id) throw new AuthorizedError("Xác thực thất bại");
-	const { usr_role, usr_phone, usr_address } = await User.findOne({ where: { usr_id: userId } });
+	const user = await User.findOne({ where: { usr_id: userId } });
+	if (!user) throw new AuthorizedError("Tài khoản không tồn tại");
+	const { usr_role, usr_phone, usr_address } = user;
 	if (!(usr_role > ENUM_ROLE.BAN)) {
 		throw new NotFoundError("Tài khoản này đã bị cấm");
 	}
@@ -28,20 +41,17 @@ const authentication = asyncHandler(async (req, res, next) => {
 		role: usr_role,
 		tokenTime: userDecode.timestamp,
 		phone: usr_phone,
-		address: usr_address
+		address: usr_address,
 	};
 	return next();
 });
 
-
 const checkRole = (permissions) => {
 	return (req, res, next) => {
-		const { role } = req.user
+		const { role } = req.user;
 		if (!permissions.includes(role)) throw new PermissionError("Bạn không có quyền truy cập");
-		next()
-	}
-}
-
-
+		next();
+	};
+};
 
 module.exports = { authentication, checkRole };

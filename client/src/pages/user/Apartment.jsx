@@ -24,6 +24,7 @@ import {
 import Stats from '@/components/user/Stats';
 import {
   ENUM_ACTION,
+  ENUM_STATUS_APARTMENT,
   ENUM_STRING_PRIORY,
   ENUM_STRING_STATUS_APARTMENT,
 } from '@/constant';
@@ -48,7 +49,7 @@ export default function Apartment() {
 		const fetchApartment = async () => {
 			if (filter?.apart_status === -1) delete filter.apart_status;
 			const response = await ApartmentApi.getMyApartment(filter);
-			if (response.status === 200) {
+			if (response?.status === 200) {
 				setApartments(response.metadata.data.apartments);
 				setTotal(response.metadata.data.totalCount);
 				setStat(response.metadata.data.statData);
@@ -56,7 +57,7 @@ export default function Apartment() {
 		};
 		const fetchConfig = async () => {
 			const response = await ApartmentApi.getConfigAmountPriority();
-			if (response.status === 200) {
+			if (response?.status === 200) {
 				setConfig(response.metadata.data);
 			}
 		};
@@ -66,7 +67,7 @@ export default function Apartment() {
 		if (filter?.apart_status === -1) delete filter.apart_status;
 		const response = await ApartmentApi.getMyApartment(filter);
 
-		if (response.status === 200) {
+		if (response?.status === 200) {
 			setApartments(response.metadata.data.apartments);
 			setTotal(response.metadata.data.totalCount);
 			setFilter({ ...filter, page: 1 });
@@ -74,18 +75,36 @@ export default function Apartment() {
 	};
 	const submitDelete = async (userId, apart_id) => {
 		const res = await ApartmentApi.deleteApartment(apart_id);
-		if (res.status === 200) {
+		if (res?.status === 200) {
 			setApartments((prev) => prev.filter((apart) => apart.apart_id !== apart_id));
-			toast.success("Xóa căn hộ thành công", {
+			toast.success("Xóa tin đăng thành công", {
 				duration: 1000,
 			});
+		}
+	};
+	const submitPay = async (userId, apart_id) => {
+		const res = await ApartmentApi.payApartment(apart_id);
+		if (res?.status === 200) {
+			toast.success("Đang chuyển hướng đến trang thanh toán", {
+				duration: 1000,
+			});
+			window.open(res.metadata.data.payment_url, "_self");
+		}
+	};
+	const submitVerify = async (userId, apart_id) => {
+		const res = await ApartmentApi.verifyApartment(apart_id);
+		if (res?.status === 200) {
+			toast.success("Đang chuyển hướng đến trang thanh toán", {
+				duration: 1000,
+			});
+			window.open(res.metadata.data.payment_url, "_self");
 		}
 	};
 
 	return (
 		<div className="p-4">
 			{stat && <Stats stat={stat} />}
-			<div className="flex flex-wrap gap-3">
+			<div className="flex flex-wrap gap-3 py-3">
 				<div className="flex-1 w-full sm:min-w-[300px]">
 					<input
 						type="text"
@@ -107,9 +126,14 @@ export default function Apartment() {
 						className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
 					>
 						<option value="-1">Tất cả</option>
-						<option value="1">Đã được duyệt</option>
-						<option value="0">Chưa thanh toán</option>
-						<option value="2">Đã khóa</option>
+						{
+							// map ENUM_STRING_STATUS_APARTMENT to select options
+							Object.keys(ENUM_STRING_STATUS_APARTMENT).map((key) => (
+								<option key={key} value={key}>
+									{ENUM_STRING_STATUS_APARTMENT[key]}
+								</option>
+							))
+						}
 					</select>
 				</div>
 				<div className="flex gap-3">
@@ -121,7 +145,7 @@ export default function Apartment() {
 					</Button>
 					<NavLink to="/user/apartment/add">
 						<Button className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-200">
-							Thêm căn hộ
+							Thêm tin đăng
 						</Button>
 					</NavLink>
 				</div>
@@ -132,7 +156,7 @@ export default function Apartment() {
 					<TableHeader>
 						<TableRow>
 							<TableHead className="min-w-[100px]">Hình ảnh</TableHead>
-							<TableHead className="min-w-[120px]">Tên căn hộ</TableHead>
+							<TableHead className="min-w-[120px]">Tên tin đăng</TableHead>
 							<TableHead className="min-w-24">Diện tích</TableHead>
 							<TableHead className="min-w-24">Số phòng</TableHead>
 							<TableHead className="min-w-24">Số toilet</TableHead>
@@ -188,25 +212,48 @@ export default function Apartment() {
 								</TableCell>
 								<TableCell className="min-w-[150px]">
 									{apartment.apart_report_reason ? (
-										<div className="flex items-center gap-2">
-											<Badge className="bg-red-500">Lý do khóa</Badge>
-											<p>{apartment.apart_report_reason}</p>
+										<div className="flex items-center justify-between gap-2">
+											<div className="flex items-center gap-2">
+												<Badge className="bg-red-500">Lý do khóa</Badge>
+												<p>{apartment.apart_report_reason}</p>
+											</div>
 										</div>
 									) : (
 										<div className="flex gap-2">
 											<NavLink to={`/apartment/${apartment.apart_id}`}>
-												<Button className="bg-blue-500 min-w-20">Chi tiết</Button>
+												<Button className="bg-[#3B82F6] min-w-20">Chi tiết</Button>
 											</NavLink>
 											<NavLink to={`/user/apartment/edit/${apartment.apart_id}`}>
-												<Button className="bg-yellow-400 min-w-20">Sửa</Button>
+												<Button className="bg-[#EAB308] text-[#1F2937] min-w-20">Sửa</Button>
 											</NavLink>
 											<ActionDialog
 												action={ENUM_ACTION.DELETE}
-												title={"căn hộ " + apartment.apart_title}
-												color="bg-red-500"
+												title={"tin đăng " + apartment.apart_title}
+												color="bg-[#EF4444]"
 												submit={submitDelete}
 												id={apartment.apart_id}
 											/>
+											{apartment.apart_status === ENUM_STATUS_APARTMENT.PENDING && (
+												<ActionDialog
+													action={ENUM_ACTION.PAY}
+													title={"tin đăng " + apartment.apart_title}
+													color="bg-[#10B981]"
+													submit={submitPay}
+													id={apartment.apart_id}
+												/>
+											)}
+											{
+												// if apartment is not pending, show boost dialog
+												apartment.apart_status === ENUM_STATUS_APARTMENT.ACTIVE && (
+													<ActionDialog
+														action={ENUM_ACTION.VERIFY_APARTMENT}
+														title={"tin đăng " + apartment.apart_title}
+														color="bg-[#14B8A6]"
+														submit={submitVerify}
+														id={apartment.apart_id}
+													/>
+												)
+											}
 											<DialogBoosted
 												config={config}
 												endDate={apartment.apart_expired_date}

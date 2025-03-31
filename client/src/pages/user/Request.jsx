@@ -30,7 +30,7 @@ export default function Request() {
 	useEffect(() => {
 		const fetchRequest = async () => {
 			const response = await RentRequestApi.searchRentRequest();
-			if (response.status === 200) {
+			if (response?.status === 200) {
 				setRequests(response.metadata.data);
 			}
 		};
@@ -42,7 +42,7 @@ export default function Request() {
 		const response = await RentRequestApi.updateStatusRentRequest(requestId, {
 			status: ENUM_RENT_REQUEST.CANCEL,
 		});
-		if (response.status === 200) {
+		if (response?.status === 200) {
 			setRequests([
 				...requests.map((request) => {
 					if (request.request_id == requestId) {
@@ -61,7 +61,7 @@ export default function Request() {
 			status: ENUM_RENT_REQUEST.ACCEPTED,
 		});
 
-		if (response.status === 200) {
+		if (response?.status === 200) {
 			setRequests([
 				...requests.map((request) => {
 					if (request.request_id === requestId) {
@@ -79,7 +79,7 @@ export default function Request() {
 		const response = await RentRequestApi.updateStatusRentRequest(requestId, {
 			status: ENUM_RENT_REQUEST.REJECTED,
 		});
-		if (response.status === 200) {
+		if (response?.status === 200) {
 			setRequests([
 				...requests.map((request) => {
 					if (request.request_id === requestId) {

@@ -7,7 +7,7 @@ function DefaultLayout() {
 	return (
 		<>
 			<Header />
-			<main className="mt-14 bg-[#FBF8EF] pt-6 px-4">
+			<main className="mt-14 bg-gradient-to-b from-gray-50 to-gray-100 pt-6 px-4">
 				<Outlet />
 			</main>
 			<Footer />

@@ -6,6 +6,7 @@ const {
 	ENUM_PRIORY,
 	ENUM_STRING_PRIORY,
 	ENUM_TYPE_ORDER,
+	AMOUNT_FOR_VERIFY_APARTMENT,
 } = require("../constant");
 const Apartment = require("../models/apartment.model");
 const Image = require("../models/images.model");
@@ -14,13 +15,15 @@ const { apiResponse } = require("../utils/response");
 const { BadRequestError } = require("../core/error.response");
 const { validateAddress, getInfoData, convertParam } = require("../utils/");
 const sequelize = require("../dbs//init.mysql");
-const { Op } = require("sequelize");
+const { Op, ENUM } = require("sequelize");
 const VNPService = require("./vnpay.service");
 const Order = require("../models/order.model");
 const { VNP_RETURN_URL } = require("../configs/vnpay.config");
 const BlacklistWord = require("./blacklistWord.service");
 const moment = require("moment");
 const EmailService = require("./email.service");
+const { AI_SERVICE_URL } = require("../configs");
+const VerifyApartmentMedia = require("../models/verifyMedia.model");
 function checkValidity(images) {
 	return images
 		.map((img, index) => (img.is_valid ? null : index + 1))
@@ -83,12 +86,11 @@ class ApartmentService {
 		}
 		if (role == ENUM_ROLE.USER) {
 			if (!id) {
-				where["apart_status"] = 1;
-			} else {
-				where[Op.or] = {
-					usr_id: id,
-					apart_status: 1,
+				where["apart_status"] = {
+					[Op.gte]: ENUM_STATUS_APARTMENT.ACTIVE,
 				};
+			} else {
+				where["usr_id"] = id;
 			}
 		}
 		return apiResponse({
@@ -116,7 +118,11 @@ class ApartmentService {
 							"usr_avatar",
 							"createdAt",
 						],
-					},
+					},{
+						model: VerifyApartmentMedia,
+						as: "verify_apartment_media",
+						required: false,
+					}
 				],
 			}),
 		});
@@ -137,13 +143,14 @@ class ApartmentService {
 			throw new BadRequestError(errors.join(","));
 		}
 		if (role == ENUM_ROLE.USER) {
-			if (!data?.usr_id) {
-				queryParams.apart_status = 1;
+			if (data?.usr_id) {
+				queryParams["usr_id"] = data.usr_id;
 			} else {
-				queryParams[Op.or] = {
-					usr_id: data.usr_id,
-					apart_status: 1,
-				};
+				if (!queryParams?.apart_status) {
+					queryParams["apart_status"] = {
+						[Op.gte]: ENUM_STATUS_APARTMENT.ACTIVE,
+					};
+				}
 			}
 		}
 		if (role == ENUM_ROLE.ADMIN || role == ENUM_ROLE.STAFF) {
@@ -151,7 +158,7 @@ class ApartmentService {
 		}
 		page = +page;
 		limit = +limit;
-
+		console.log(queryParams);
 		const offset = (page - 1) * limit;
 		task.push(
 			Apartment.findAll({
@@ -180,7 +187,15 @@ class ApartmentService {
 				limit,
 				offset,
 				order: [
-					["apart_priority", "desc"],
+					[
+						sequelize.literal(`
+							CASE 
+								WHEN apart_expired_date IS NOT NULL AND apart_expired_date > NOW() THEN apart_priority 
+								ELSE 0 
+							END
+						`),
+						"DESC", // Moved DESC here
+					],
 					["createdAt", "desc"],
 					[orderBy, orderType],
 				],
@@ -219,7 +234,8 @@ class ApartmentService {
 		});
 	}
 	static async validImage({ image_urls }) {
-		const response = await fetch("http://localhost:8000/detect/multiple/url", {
+		console.log(AI_SERVICE_URL);
+		const response = await fetch(`${AI_SERVICE_URL}/detect/multiple/url`, {
 			method: "POST",
 			body: JSON.stringify({ image_urls }),
 			headers: {
@@ -289,9 +305,9 @@ class ApartmentService {
 		if (!isValid) {
 			throw new BadRequestError("Địa chỉ không tồn tại");
 		}
-		// const isValidImage = await ApartmentService.validImage({
-		// 	image_urls: apart_images.map((img) => img.img_url),
-		// });
+		const isValidImage = await ApartmentService.validImage({
+			image_urls: apart_images.map((img) => img.img_url),
+		});
 		// Start a transaction
 		const transaction = await sequelize.transaction();
 		try {
@@ -380,9 +396,9 @@ class ApartmentService {
 			apart_ward,
 			apart_images,
 		} = data;
-		// const isValidImage = await ApartmentService.validImage({
-		// 	image_urls: apart_images.map((img) => img.img_url),
-		// });
+		const isValidImage = await ApartmentService.validImage({
+			image_urls: apart_images.map((img) => img.img_url),
+		});
 		const isValid = validateAddress({
 			city: apart_city,
 			district: apart_district,
@@ -571,6 +587,51 @@ class ApartmentService {
 			throw error;
 		}
 	}
+	static async unBlockApartment(apart_id, userId) {
+		const transaction = await sequelize.transaction();
+		try {
+			const apartment = await Apartment.findOne({
+				where: {
+					apart_id,
+				},
+				transaction,
+			});
+			await apartment.update(
+				{ apart_status: ENUM_STATUS_APARTMENT.ACTIVE, apart_report_reason: null },
+				{
+					transaction,
+				},
+			);
+			const user = await User.findOne({
+				where: { usr_id: userId },
+				transaction: transaction,
+			});
+			await user.update(
+				{
+					usr_totals_apartment: sequelize.literal("usr_totals_apartment + 1"),
+				},
+				{
+					transaction: transaction,
+				},
+			);
+			EmailService.send({
+				receiver: user.usr_email,
+				templateName: "unBlockApartment",
+			})({
+				name: user.usr_name,
+				data: apartment,
+			});
+			await transaction.commit();
+			return apiResponse({
+				code: 200,
+				message: "Unblock apartment successfully",
+				data: apartment,
+			});
+		} catch (error) {
+			await transaction.rollback();
+			throw error;
+		}
+	}
 	static async boostApartment({ apart_id, userId, duration, priority, ip_address }) {
 		const transaction = await sequelize.transaction();
 		try {
@@ -663,6 +724,102 @@ class ApartmentService {
 			message: "Get config amount priority successfully",
 			data: ENUM_PRICE_PRIORITY,
 		});
+	}
+	static async payApartment({ apart_id, userId, ip_address }) {
+		const transaction = await sequelize.transaction();
+		try {
+			const apartment = await Apartment.findOne({ where: { apart_id, usr_id: userId } });
+			if (!apartment) {
+				throw new BadRequestError("Không tìm thấy tin đăng nào");
+			}
+			if (apartment.apart_status !== ENUM_STATUS_APARTMENT.PENDING) {
+				throw new BadRequestError("Tin đăng đã được thanh toán");
+			}
+			const order_code = `order-${moment().format("DDHHmmss")}`;
+			const order_info = `Thanh toán cho tin đăng ${apartment.apart_title}`;
+			const newOrder = await Order.create(
+				{
+					order_code: order_code,
+					order_amount: ENUM_PRICE_PRIORITY[ENUM_PRIORY.DEFAULT],
+					order_info,
+					order_usr_id: userId,
+					order_apart_id: apartment.apart_id,
+					order_type: ENUM_TYPE_ORDER.PAY_FOR_APARTMENT,
+				},
+				{
+					transaction,
+				},
+			);
+			if (!newOrder) {
+				throw new BadRequestError("Không thể tạo đơn hàng");
+			}
+			const payment_url = await VNPService.createPaymentUrl({
+				amount: ENUM_PRICE_PRIORITY[ENUM_PRIORY.DEFAULT],
+				order_info,
+				order_code,
+				ip_address,
+				return_url: VNP_RETURN_URL,
+			});
+			await transaction.commit();
+			return apiResponse({
+				code: 200,
+				message: "Pay apartment successfully",
+				data: {
+					payment_url,
+				},
+			});
+		} catch (error) {
+			await transaction.rollback();
+			throw error;
+		}
+	}
+	static async verifyApartment({ apart_id, userId, ip_address }) {
+		const transaction = await sequelize.transaction();
+		try {
+			const apartment = await Apartment.findOne({ where: { apart_id, usr_id: userId } });
+			if (!apartment) {
+				throw new BadRequestError("Không tìm thấy tin đăng nào");
+			}
+			if (apartment.apart_status === ENUM_STATUS_APARTMENT.IS_VERIFIED) {
+				throw new BadRequestError("Tin đăng đã được xác thực");
+			}
+			const order_code = `order-${moment().format("DDHHmmss")}`;
+			const order_info = `Thanh toán xác thực tin đăng ${apartment.apart_title}`;
+			const newOrder = await Order.create(
+				{
+					order_code: order_code,
+					order_amount: AMOUNT_FOR_VERIFY_APARTMENT,
+					order_info,
+					order_usr_id: userId,
+					order_apart_id: apartment.apart_id,
+					order_type: ENUM_TYPE_ORDER.PAY_FOR_VERIFY_APARTMENT,
+				},
+				{
+					transaction,
+				},
+			);
+			if (!newOrder) {
+				throw new BadRequestError("Không thể tạo đơn hàng");
+			}
+			const payment_url = await VNPService.createPaymentUrl({
+				amount: AMOUNT_FOR_VERIFY_APARTMENT,
+				order_info,
+				order_code,
+				ip_address,
+				return_url: VNP_RETURN_URL,
+			});
+			await transaction.commit();
+			return apiResponse({
+				code: 200,
+				message: "Đã tạo đơn hàng xác thực tin đăng",
+				data: {
+					payment_url,
+				},
+			});
+		} catch (error) {
+			await transaction.rollback();
+			throw error;
+		}
 	}
 }
 module.exports = ApartmentService;

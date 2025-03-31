@@ -22,6 +22,15 @@ class EmailService {
 				});
 				return info.messageId;
 			},
+			unBlockApartment: async ({ name, data }) => {
+				let info = await transporter.sendMail({
+					from: "Shop <anhanhxxz0@gmail.com>",
+					to: receiver,
+					subject: "Xin chào, " + receiver,
+					html: template_html[templateName]({ name, data }),
+				});
+				return info.messageId;
+			},
 		};
 		return template[templateName];
 	};

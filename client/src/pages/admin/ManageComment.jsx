@@ -30,7 +30,7 @@ export default function ManageComment() {
 	});
 	const submitDelete = async (userId, cmt_id) => {
 		const res = await CommentApi.deleteComment(cmt_id);
-		if (res.status === 200) {
+		if (res?.status === 200) {
 			setComments((prev) => prev.filter((comment) => comment.cmt_id !== cmt_id));
 			toast.success("Xóa tin đăng thành công", {
 				duration: 1000,
@@ -41,7 +41,7 @@ export default function ManageComment() {
 	useEffect(() => {
 		const fetchComment = async () => {
 			const response = await CommentApi.searchComment(filter);
-			if (response.status === 200) {
+			if (response?.status === 200) {
 				setComments(response.metadata.data.comments);
 				setTotal(response.metadata.data.totalCount);
 			}
@@ -50,7 +50,7 @@ export default function ManageComment() {
 	}, [filter.page]);
 	const handleFilter = async () => {
 		const response = await CommentApi.searchComment(filter);
-		if (response.status === 200) {
+		if (response?.status === 200) {
 			setComments(response.metadata.data.comments);
 			setTotal(response.metadata.data.totalCount);
 			setFilter({ ...filter, page: 1 });
@@ -58,8 +58,8 @@ export default function ManageComment() {
 	};
 
 	return (
-		<div className="p-4 container mx-auto">
-			<div className="flex flex-wrap gap-3">
+		<div className="h-full flex flex-col px-4 py-3">
+			<div className="flex flex-wrap gap-3 py-3">
 				<div className="flex-1 w-full sm:min-w-[300px]">
 					<input
 						type="text"
@@ -94,7 +94,7 @@ export default function ManageComment() {
 							<TableRow key={comment.cmt_id}>
 								<TableCell className="min-w-[100px]">
 									<NavLink
-										to={"/user/profile/" + comment.usr_id}
+										to={"/profile/" + comment.usr_id}
 										className="flex items-center gap-3"
 									>
 										<div className="size-14 rounded-full border border-gray-300 overflow-hidden">

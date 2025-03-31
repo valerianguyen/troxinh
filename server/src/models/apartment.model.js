@@ -2,7 +2,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../dbs/init.mysql");
 const User = require("./user.model");
-
+const { ENUM_STATUS_APARTMENT } = require("../constant");
 const Apartment = sequelize.define(
 	"Apartment",
 	{
@@ -73,28 +73,31 @@ const Apartment = sequelize.define(
 			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
-		apart_report_reason:{
+		apart_report_reason: {
 			type: DataTypes.TEXT,
 			allowNull: true,
 		},
-		apart_priority:{
+		apart_priority: {
 			type: DataTypes.INTEGER,
 			defaultValue: 0,
 		},
-		apart_time_start:{
+		apart_time_start: {
 			type: DataTypes.DATE,
 			allowNull: true,
 		},
-		apart_expired_date:{
+		apart_expired_date: {
 			type: DataTypes.DATE,
 			allowNull: true,
 		},
-		apart_status:{
+		apart_status: {
 			type: DataTypes.INTEGER,
-			defaultValue: 0,
+			defaultValue: ENUM_STATUS_APARTMENT.PENDING,
+			validates: {
+				isIn: [[...Object.values(ENUM_STATUS_APARTMENT)]],
+			},
 			// 0 pending, 1: active, 2: block,
 			// use status instead apart_isPublished
-		}
+		},
 	},
 	{
 		timestamps: true,

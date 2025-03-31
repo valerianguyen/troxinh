@@ -59,6 +59,25 @@ router.post(
 	checkRole([ENUM_ROLE.ADMIN, ENUM_ROLE.STAFF]),
 	asyncHandler(ApartmentController.blockApartment),
 );
-router.post("/boost/:apart_id", checkRole([ENUM_ROLE.USER]), asyncHandler(ApartmentController.boostApartment));
+router.post(
+	"/unblock/:userId/:apart_id",
+	checkRole([ENUM_ROLE.ADMIN, ENUM_ROLE.STAFF]),
+	asyncHandler(ApartmentController.unBlockApartment),
+);
+router.post(
+	"/pay/:apart_id",
+	checkRole([ENUM_ROLE.USER]),
+	asyncHandler(ApartmentController.payApartment),
+);
+router.post(
+	"/boost/:apart_id",
+	checkRole([ENUM_ROLE.USER]),
+	asyncHandler(ApartmentController.boostApartment),
+);
+router.post(
+	"/verify/:apart_id",
+	checkRole([ENUM_ROLE.USER]),
+	asyncHandler(ApartmentController.verifyApartment),
+);
 
 module.exports = router;

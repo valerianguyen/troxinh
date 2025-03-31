@@ -8,10 +8,10 @@ const validateFactory = require('../../middlewares/validation.middleware')
 const { queryUser, updateUserBody } = require('../../validations/user.validation')
 const router = express.Router()
 
+router.get('/profile/:id', asyncHandler(UserController.getUserById));
 router.use(authentication)
 router.get("/me", asyncHandler(UserController.me));
 router.get('/', checkRole([ENUM_ROLE.ADMIN,ENUM_ROLE.STAFF]), validateFactory(queryUser), asyncHandler(UserController.getAllUsers));
-router.get('/:id', asyncHandler(UserController.getUserById));
 router.put('/', validateFactory(updateUserBody), asyncHandler(UserController.updateUser));
 router.post('/ban/:id', checkRole([ENUM_ROLE.ADMIN]), asyncHandler(UserController.banUser));
 router.put('/role/:id', checkRole([ENUM_ROLE.ADMIN]), asyncHandler(UserController.changeRoleStaff));

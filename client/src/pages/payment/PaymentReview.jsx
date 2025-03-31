@@ -75,7 +75,7 @@ export default function PaymentStatusPage() {
 	useEffect(() => {
 		async function getOrder() {
 			const response = await OrderApi.getOrderByCode(orderCode);
-			if (response.status === 200) {
+			if (response?.status === 200) {
 				setOrder({
 					...response.metadata.data,
 				});
@@ -145,13 +145,23 @@ export default function PaymentStatusPage() {
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-6">
 							<div>
 								<div className="text-sm text-muted-foreground">Mã tin đăng</div>
-								<NavLink to={`/apartment/${order.apartment.apart_id}`} className={"text-blue-500 hover:underline"}>
+								<NavLink
+									to={`/apartment/${order.apartment.apart_id}`}
+									className={"text-blue-500 hover:underline"}
+								>
 									#{order.apartment.apart_id}
 								</NavLink>
 							</div>
 							<div>
 								<div className="text-sm text-muted-foreground">Tiêu đề</div>
-								<div>{order.apartment.apart_title}</div>
+								<div>
+									<NavLink
+										to={`/apartment/${order.apartment.apart_id}`}
+										className={"text-blue-500 hover:underline break-words"}
+									>
+										{order.apartment.apart_title}
+									</NavLink>
+								</div>
 							</div>
 							<div>
 								<div className="text-sm text-muted-foreground">Mô tả</div>

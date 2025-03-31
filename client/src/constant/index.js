@@ -86,13 +86,15 @@ const ENUM_STRING_APARTMENT_CATEGORIES = {
 };
 const ENUM_STATUS_APARTMENT = {
 	PENDING: 0,
-	ACTIVE: 1,
-	BLOCK: 2,
+	BLOCK: 1,
+	ACTIVE: 2,
+	IS_VERIFIED: 3,
 };
 const ENUM_STRING_STATUS_APARTMENT = {
 	0: "Chưa thanh toán",
-	1: "Đang hoạt động",
-	2: "Đã khóa",
+	1: "Đã khóa",
+	2: "Đang hoạt động",
+	3: "Đã xác thực",
 };
 const ENUM_ACTION = {
 	DELETE: 0,
@@ -103,6 +105,9 @@ const ENUM_ACTION = {
 	REJECTED: 5,
 	DONE: 6,
 	CANCEL: 7,
+	PAY: 8,
+	UNBLOCK: 9,
+	VERIFY_APARTMENT: 10,
 };
 const ENUM_STRING_ACTION = {
 	0: "xóa",
@@ -113,22 +118,40 @@ const ENUM_STRING_ACTION = {
 	5: "từ chối",
 	6: "đã xử lí",
 	7: "hủy",
+	8: "thanh toán",
+	9: "mở khóa",
+	10: "xác thực",
 };
 const ENUM_ORDER = {
 	PENDING: 0,
 	SUCCESS: 1,
 	FAILED: -1,
 };
+const ENUM_STATUS_VERIFY_APARTMENT = {
+	PENDING: 0,
+	DONE: 1,
+	REJECTED: -1,
+};
+const ENUM_STATUS_STRING_VERIFY_APARTMENT = {
+	0: "Chưa xác thực",
+	1: "Đã xác thực",
+	"-1": "Đã từ chối",
+};
+const ENUM_STYLE_VERIFY_APARTMENT = {
+	0: "bg-yellow-100 text-yellow-800 border-yellow-200",
+	1: "bg-green-100 text-green-800 border-green-200",
+	"-1": "bg-red-100 text-red-800 border-red-200",
+};
 const ENUM_STRING_ORDER = {
 	0: "Đã hủy",
 	1: "Thành công",
 	"-1": "Thất bại",
-}
+};
 const ENUM_COLOR_ORDER = {
 	0: "bg-yellow-400",
 	1: "bg-green-400",
 	"-1": "bg-red-400",
-}
+};
 const ENUM_PRIORY = {
 	DEFAULT: 0,
 	LOW: 1,
@@ -144,6 +167,7 @@ const ENUM_STRING_PRIORY = {
 	[ENUM_PRIORY.HIGH]: "Vàng",
 	[ENUM_PRIORY.EXTRA]: "Kim cương",
 };
+const HEADER_HEIGHT = "4rem";
 export {
   COLOR_COMMENT,
   COLOR_RENT_REQUEST,
@@ -158,7 +182,9 @@ export {
   ENUM_RENT_REQUEST,
   ENUM_ROLE,
   ENUM_STATUS_APARTMENT,
+  ENUM_STATUS_STRING_VERIFY_APARTMENT,
   ENUM_STATUS_TICKET,
+  ENUM_STATUS_VERIFY_APARTMENT,
   ENUM_STRING_ACTION,
   ENUM_STRING_APARTMENT_CATEGORIES,
   ENUM_STRING_APARTMENT_TYPE,
@@ -169,4 +195,6 @@ export {
   ENUM_STRING_ROLE,
   ENUM_STRING_STATUS_APARTMENT,
   ENUM_STRING_STATUS_TICKET,
+  ENUM_STYLE_VERIFY_APARTMENT,
+  HEADER_HEIGHT,
 };

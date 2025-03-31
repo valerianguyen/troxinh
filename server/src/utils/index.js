@@ -3,7 +3,8 @@ const _ = require("lodash");
 const province = require("../data/province.js");
 const operators = ["lte", "gte", "lt", "gt", "ne", "like"];
 const regex = new RegExp(`_(${operators.join("|")})$`);
-
+const { Op } = require("sequelize");
+const { ENUM_TYPE_ORDER } = require("../constant/index.js");
 function splitKey(key) {
 	const match = key.match(regex);
 	if (!match) return { attribute: key, operator: null };
@@ -58,8 +59,7 @@ const isValidFutureDate = (pickedTimestamp) => {
 
 	return normalizedPickedTimestamp >= currentTimestamp;
 };
-const { Op } = require("sequelize");
-const { ENUM_TYPE_ORDER } = require("../constant/index.js");
+
 
 function convertParam(queryParams) {
 	if (!queryParams)

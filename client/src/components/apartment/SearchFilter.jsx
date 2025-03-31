@@ -1,8 +1,6 @@
-import React, {
-  useEffect,
-  useRef,
-} from 'react';
+import React from 'react';
 
+import { X } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 
 import {
@@ -13,360 +11,424 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import {
-  ENUM_STRING_APARTMENT_CATEGORIES,
+  ENUM_STATUS_APARTMENT,
   ENUM_STRING_APARTMENT_TYPE,
 } from '@/constant';
 import province from '@/data/province.json';
-import { toCapitalized } from '@/utils';
-import { ChevronDown } from '@geist-ui/icons';
 
 import { Button } from '../ui/button';
+import { Checkbox } from '../ui/checkbox';
+import { Label } from '../ui/label';
+import { Slider } from '../ui/slider';
 
+function handleClearFilter(filter) {
+	const { apart_city, apart_district, apart_ward, apart_price, apart_area, ...rest } = filter;
+
+	const createRangeFilters = (range, prefix) =>
+		range
+			? {
+					[`${prefix}_gte`]: range[0] * 1000000,
+					...(range[1] != null && { [`${prefix}_lte`]: range[1] * 1000000 }),
+			  }
+			: {};
+
+	const isValidLocation = (value) => typeof value === "number" && value > -1;
+
+	return {
+		...rest,
+		...createRangeFilters(apart_price, "apart_price"),
+		...createRangeFilters(apart_area, "apart_area"),
+		...(isValidLocation(apart_city) && { apart_city }),
+		...(isValidLocation(apart_district) && { apart_district }),
+		...(isValidLocation(apart_ward) && { apart_ward }),
+	};
+}
 const rangeAttributes = [
 	{
 		label: "Giá",
-		unit: "đ",
+		unit: "triệu đ",
 		attribute: "apart_price",
+		range: [0, 100],
+		step: 0.5,
+		format: (value) => new Intl.NumberFormat("vi-VN").format(value * 1000000),
+		toNumber: (value) => Number.parseFloat(value.replace(/[^0-9]/g, "")) / 1000000,
 	},
 	{
 		label: "Diện tích",
 		unit: "m²",
 		attribute: "apart_area",
+		range: [0, 200],
+		step: 1,
+		format: (value) => value,
+		toNumber: (value) => Number.parseFloat(value.replace(/[^0-9]/g, "")),
 	},
+];
+const selectAttributes = [
 	{
 		label: "Phòng ngủ",
-		unit: "PN",
 		attribute: "apart_total_room",
+		options: ["1", "2", "3", "4", "5+"],
+		displayName: "Tất cả phòng ngủ",
+		unit: "phòng",
 	},
 	{
-		label: "Nhà vệ sinh",
-		unit: "VS",
+		label: "Phòng tắm",
 		attribute: "apart_total_toilet",
+		options: ["1", "2", "3", "4", "5+"],
+		displayName: "Tất cả phòng tắm",
+		unit: "phòng",
+	},
+	{
+		label: "Loại",
+		attribute: "apart_type",
+		options: Array.from(Object.keys(ENUM_STRING_APARTMENT_TYPE)),
+		displayName: "Tất cả loại",
+		unit: "",
 	},
 ];
 
-const RangeComponent = ({ label, setFilter, unit, filter, attribute }) => {
+const RangeComponent = ({
+	label,
+	setFilters,
+	unit,
+	filters,
+	attribute,
+	range,
+	step,
+	format,
+	toNumber,
+}) => {
 	// use for price / total toilet/ total room / area
 	return (
-		<div className="border-t border-gray-200 bg-white">
-			<div className="border-t border-gray-200 p-4">
-				<div className="flex justify-between gap-4">
-					<label htmlFor={`Filter${toCapitalized(label)}From`} className="flex items-center gap-2">
-						<span className="text-xs text-gray-600">{unit}</span>
-						<input
-							type="number"
-							id={`Filter${toCapitalized(label)}From`}
-							onChange={(e) => {
-								const value = e.target.value;
-
-								if (value !== "") {
-									setFilter({
-										...filter,
-										[attribute + "_gte"]: +value, // Add or update the key with the new value
+		<div className="space-y-4">
+			<div className="flex items-center justify-between">
+				<label className="text-sm font-medium">{`${label} (${unit})`}</label>
+				<span className="text-sm font-medium text-rose-500">
+					{filters[attribute]
+						? filters[attribute][1] === null
+							? `≥ ${filters[attribute][0]}`
+							: `${filters[attribute][0]} - ${filters[attribute][1]}`
+						: "Tất cả"}
+				</span>
+			</div>
+			<Slider
+				defaultValue={range}
+				max={range[1]}
+				step={step}
+				value={[
+					filters[attribute] ? filters[attribute][0] : 0,
+					filters[attribute] && filters[attribute][1] !== null ? filters[attribute][1] : range[1],
+				]}
+				onValueChange={(value) =>
+					setFilters({
+						...filters,
+						[attribute]: [value[0], value[1] === range[1] ? null : value[1]],
+					})
+				}
+				className="py-4"
+				thumbClassName="h-5 w-5 bg-white border-2 border-rose-500 shadow-md hover:border-rose-600"
+				trackClassName="h-2 bg-gray-100"
+				rangeClassName="h-2 bg-rose-500"
+			/>
+			<div className="grid grid-cols-2 gap-4">
+				<div className="space-y-2">
+					<label className="text-xs text-gray-500">{label} tối thiểu</label>
+					<input
+						type="text"
+						value={filters[attribute] ? format(filters[attribute][0]) : ""}
+						onChange={(e) => {
+							const value = toNumber(e.target.value);
+							if (!isNaN(value)) {
+								setFilters({
+									...filters,
+									[attribute]: [value, filters[attribute] ? filters[attribute][1] : null],
+								});
+							}
+						}}
+						className="w-full rounded-md border border-input px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-rose-500"
+						placeholder="0"
+					/>
+				</div>
+				<div className="space-y-2">
+					<label className="text-xs text-gray-500">{label} tối đa</label>
+					<input
+						type="text"
+						value={
+							filters[attribute] && filters[attribute][1] !== null
+								? format(filters[attribute][1])
+								: ""
+						}
+						onChange={(e) => {
+							const inputValue = e.target.value.trim();
+							if (inputValue === "") {
+								setFilters({
+									...filters,
+									[attribute]: [filters[attribute] ? filters[attribute][0] : 0, null],
+								});
+							} else {
+								const value = toNumber(inputValue);
+								if (!isNaN(value)) {
+									setFilters({
+										...filters,
+										[attribute]: [filters[attribute] ? filters[attribute][0] : 0, value],
 									});
-								} else {
-									const { [attribute + "_gte"]: _, ...rest } = filter; // Destructure to remove the key
-									setFilter(rest); // Set the filter without the removed key
 								}
-							}}
-							placeholder="From"
-							className="mt-1 w-full rounded-md shadow-sm sm:text-sm p-2 outline-none border border-gray-300"
-						/>
-					</label>
-
-					<label htmlFor={`Filter${toCapitalized(label)}To`} className="flex items-center gap-2">
-						<span className="text-xs text-gray-600">{unit}</span>
-						<input
-							type="number"
-							id={`Filter${toCapitalized(label)}To`}
-							onChange={(e) => {
-								const value = e.target.value;
-
-								if (value !== "") {
-									setFilter({
-										...filter,
-										[attribute + "_lte"]: +value, // Add or update the key with the new value
-									});
-								} else {
-									const { [attribute + "_lte"]: _, ...rest } = filter; // Destructure to remove the key
-									setFilter(rest); // Set the filter without the removed key
-								}
-							}}
-							placeholder="To"
-							className="mt-1 w-full rounded-md shadow-sm sm:text-sm p-2 outline-none border border-gray-300"
-						/>
-					</label>
+							}
+						}}
+						className="w-full rounded-md border border-input px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-rose-500"
+						placeholder="Không giới hạn"
+					/>
 				</div>
 			</div>
 		</div>
 	);
 };
 const SelectAddressComponent = ({ setFilter, filter }) => {
-	const selectedCity = useRef(null);
-	const selectedDistrict = useRef(null);
-	useEffect(() => {
-		selectedCity.current = province.find((city) => city.code === filter.apart_city);
-		selectedDistrict.current = selectedCity.current?.districts.find(
-			(district) => district.code === filter.apart_district,
-		);
-	}, [filter.apart_city, filter.apart_district]);
+	// Derive selected city and district directly from filter state
+	const selectedCity = province.find((city) => city.code === filter.apart_city);
+	const selectedDistrict = selectedCity?.districts?.find(
+		(district) => district.code === filter.apart_district,
+	);
+
+	const handleCityChange = (value) => {
+		const numericValue = +value;
+		const { apart_city, apart_district, apart_ward, ...rest } = filter;
+		if (numericValue === -1) {
+			// Reset all address fields when "Please select" is chosen
+			setFilter({
+				...rest,
+				apart_city: -1,
+			});
+		} else {
+			// Reset district and ward when city changes
+			setFilter({
+				...filter,
+				apart_city: numericValue,
+				apart_district: -1,
+			});
+		}
+	};
+
+	const handleDistrictChange = (value) => {
+		const numericValue = +value;
+		if (numericValue === -1) {
+			// Reset district and ward
+			const { apart_district, apart_ward, ...rest } = filter;
+			setFilter(rest);
+		} else {
+			// Reset ward when district changes
+			setFilter({
+				...filter,
+				apart_district: numericValue,
+				apart_ward: -1,
+			});
+		}
+	};
+
+	const handleWardChange = (value) => {
+		const numericValue = +value;
+		setFilter({
+			...filter,
+			apart_ward: numericValue !== -1 ? numericValue : undefined,
+		});
+	};
+
 	return (
 		<>
-			<div>
-				<label htmlFor="apart_city" className="block text-xs font-medium text-gray-700">
+			<div className="space-y-2">
+				<label htmlFor="apart_city" className="text-sm font-medium">
 					Tỉnh/Thành phố
 				</label>
-				<select
-					name="apart_city"
-					id="apart_city"
-					className="w-full mt-1 p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
-					onChange={(e) => {
-						selectedCity.current = province.find((city) => city.code === +e.target.value);
-						if (+e.target.value !== -1) {
-							setFilter({
-								...filter,
-								apart_city: +e.target.value,
-							});
-						}
-					}}
-				>
-					<option defaultValue value={-1}>
-						Vui lòng chọn tỉnh/thành phố
-					</option>
-					{province.map((city) => (
-						<option key={city.code} value={+city.code}>
-							{city.name}
-						</option>
-					))}
-				</select>
+				<Select value={filter.apart_city?.toString() || "-1"} onValueChange={handleCityChange}>
+					<SelectTrigger>
+						<SelectValue placeholder="Chọn Tỉnh/Thành phố" />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectItem value="-1">Vui lòng chọn tỉnh/thành phố</SelectItem>
+						{province.map((city) => (
+							<SelectItem key={city.code} value={city.code.toString()}>
+								{city.name}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
 			</div>
 
 			{/* District */}
-			{selectedCity.current && (
-				<div>
-					<label htmlFor="apart_district" className="text-xs block font-medium text-gray-700">
+			{selectedCity && (
+				<div className="space-y-2">
+					<label htmlFor="apart_district" className="text-sm font-medium">
 						Quận/Huyện
 					</label>
-					<select
-						id="apart_district"
-						name="apart_district"
-						className="w-full mt-1 p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
-						onChange={(e) => {
-							selectedDistrict.current = selectedCity.current.districts.find(
-								(district) => district.code === +e.target.value,
-							);
-
-							if (+e.target.value !== -1) {
-								setFilter({
-									...filter,
-									apart_district: +e.target.value,
-								});
-							}
-						}}
+					<Select
+						value={filter.apart_district?.toString() || "-1"}
+						onValueChange={handleDistrictChange}
 					>
-						<option defaultValue value={-1}>
-							Vui lòng chọn quận/huyện
-						</option>
-						{selectedCity.current?.districts.map((district, index) => (
-							<option key={district.code} value={district.code}>
-								{district.name}
-							</option>
-						))}
-					</select>
+						<SelectTrigger>
+							<SelectValue placeholder="Chọn Quận/Huyện" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="-1">Vui lòng chọn quận/huyện</SelectItem>
+							{selectedCity.districts?.map((district) => (
+								<SelectItem key={district.code} value={district.code.toString()}>
+									{district.name}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
 				</div>
 			)}
 
 			{/* Ward */}
-			{selectedCity.current && selectedDistrict.current && (
-				<div>
-					<label htmlFor="apart_ward" className="block text-xs font-medium text-gray-700">
+			{selectedDistrict && (
+				<div className="space-y-2">
+					<label htmlFor="apart_ward" className="text-sm font-medium">
 						Phường/Xã
 					</label>
-					<select
-						id="apart_ward"
-						name="apart_ward"
-						className="w-full mt-1 p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
-						onChange={(e) => {
-							if (+e.target.value !== -1) {
-								setFilter({
-									...filter,
-									apart_ward: +e.target.value,
-								});
-							}
-						}}
-					>
-						<option defaultValue value={-1}>
-							Vui lòng chọn phường/xã
-						</option>
-						{selectedDistrict.current.wards.map((ward, index) => (
-							<option key={ward.code} value={ward.code}>
-								{ward.name}
-							</option>
-						))}
-					</select>
+					<Select value={filter.apart_ward?.toString() || "-1"} onValueChange={handleWardChange}>
+						<SelectTrigger>
+							<SelectValue placeholder="Chọn Phường/Xã" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="-1">Vui lòng chọn phường/xã</SelectItem>
+							{selectedDistrict.wards?.map((ward) => (
+								<SelectItem key={ward.code} value={ward.code.toString()}>
+									{ward.name}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
 				</div>
 			)}
 		</>
 	);
 };
-const SelectComponent = ({ label, setFilter, filter, options, displayName }) => {
+const SelectComponent = ({ attribute, setFilter, filter, options, displayName, label, unit }) => {
 	return (
-		<Select
-			onValueChange={(value) => {
-				if (value !== -1) {
-					setFilter({
-						...filter,
-						[label]: value,
-					});
-				}
-			}}
-		>
-			<SelectTrigger className="w-full font-medium">
-				<SelectValue placeholder={displayName} />
-			</SelectTrigger>
-			<SelectContent>
-				<SelectItem value={-1}>{displayName}</SelectItem>
-				{Array.from(Object.keys(options)).map((key) => (
-					<SelectItem key={key} value={key}>
-						{options[key]}
-					</SelectItem>
-				))}
-			</SelectContent>
-		</Select>
+		<div className="space-y-2">
+			<label className="text-sm font-medium">{label}</label>
+			<Select
+				onValueChange={(value) => {
+					if (value !== -1) {
+						const valueSplit = value.split("+");
+						if (valueSplit.length > 1) {
+							delete filter[attribute];
+							setFilter({
+								...filter,
+								[`${attribute}_gte`]: parseInt(valueSplit[0]),
+							});
+						} else {
+							delete filter[`${attribute}_gte`];
+							setFilter({
+								...filter,
+								[attribute]: parseInt(valueSplit[0]),
+							});
+						}
+					} else {
+						delete filter[attribute];
+						delete filter[`${attribute}_gte`];
+						setFilter({
+							...filter,
+						});
+					}
+				}}
+			>
+				<SelectTrigger className="w-full font-medium">
+					<SelectValue placeholder={displayName} />
+				</SelectTrigger>
+				<SelectContent>
+					<SelectItem value={-1}>{displayName}</SelectItem>
+					{Array.from(options).map((value) => (
+						<SelectItem key={value} value={value}>
+							{`${attribute === "apart_type" ? ENUM_STRING_APARTMENT_TYPE[value] : value} ${unit}`}
+						</SelectItem>
+					))}
+				</SelectContent>
+			</Select>
+		</div>
 	);
 };
 export const SearchFilter = ({ filter, setFilter, onFilter }) => {
 	const [searchParams] = useSearchParams();
 	return (
-		<div className="flex flex-col gap-3 bg-white mb-5">
-			<details
-				className="overflow-hidden border-none outline-none rounded-lg [&_summary::-webkit-details-marker]:hidden flex flex-col px-3 space-y-3"
-				open={true}
-			>
-				<summary className="flex cursor-pointer items-center justify-between gap-2 p-4 text-gray-900 transition">
-					<span className="text-sm font-medium"> Lọc </span>
-					<span className="transition group-open:-rotate-180">
-						<ChevronDown className="size-5" />
-					</span>
-				</summary>
-				{rangeAttributes.map((item) => (
-					<details
-						key={item.label}
-						className="overflow-hidden rounded border border-gray-300 [&_summary::-webkit-details-marker]:hidden"
-					>
-						<summary className="flex cursor-pointer items-center justify-between gap-2 p-4 text-gray-900 transition">
-							<span className="text-sm font-medium"> {toCapitalized(item.label)} </span>
-
-							<span className="transition group-open:-rotate-180">
-								<ChevronDown className="size-5" />
-							</span>
-						</summary>
-						<RangeComponent
-							label={item.label}
-							setFilter={setFilter}
-							attribute={item.attribute}
-							unit={item.unit}
-							filter={filter}
-						/>
-					</details>
-				))}
-
-				<details className="overflow-hidden rounded border border-gray-300 [&_summary::-webkit-details-marker]:hidden">
-					<summary className="flex cursor-pointer items-center justify-between gap-2 p-4 text-gray-900 transition">
-						<span className="text-sm font-medium"> Địa chỉ </span>
-						<span className="transition group-open:-rotate-180">
-							<ChevronDown className="size-5" />
-						</span>
-					</summary>
-
-					<div className="border-t border-gray-200 bg-white">
-						<div className="flex flex-col p-4 gap-3">
-							<SelectAddressComponent filter={filter} setFilter={setFilter} />
-						</div>
-					</div>
-				</details>
-				<SelectComponent
-					label={"apart_type"}
-					displayName={"Loại"}
-					filter={filter}
-					setFilter={setFilter}
-					options={ENUM_STRING_APARTMENT_TYPE}
-				></SelectComponent>
-				<SelectComponent
-					label={"apart_category"}
-					displayName={"Tất cả bất động sản"}
-					filter={filter}
-					setFilter={setFilter}
-					options={ENUM_STRING_APARTMENT_CATEGORIES}
-				></SelectComponent>
-				<details className="overflow-hidden rounded border border-gray-300 [&_summary::-webkit-details-marker]:hidden">
-					<summary className="flex cursor-pointer items-center justify-between gap-2 p-4 text-gray-900 transition">
-						<span className="text-sm font-medium"> Sắp xếp theo </span>
-
-						<span className="transition group-open:-rotate-180">
-							<ChevronDown className="size-5" />
-						</span>
-					</summary>
-
-					<div className="border-t border-gray-200 bg-white grid grid-cols-2 sm:grid-cols-4 md:grid-cols-3">
-						{rangeAttributes.map((item) => (
-							<label key={item.label} className="flex items-center gap-2 p-4">
-								<input
-									type="radio"
-									name="sort"
-									value={item.attribute}
-									onChange={(e) => setFilter({ ...filter, orderBy: e.target.value })}
-								/>
-								<span>{toCapitalized(item.label)}</span>
-							</label>
-						))}
-					</div>
-				</details>
-				<details className="overflow-hidden rounded border border-gray-300 [&_summary::-webkit-details-marker]:hidden">
-					<summary className="flex cursor-pointer items-center justify-between gap-2 p-4 text-gray-900 transition">
-						<span className="text-sm font-medium"> Sắp xếp theo </span>
-
-						<span className="transition group-open:-rotate-180">
-							<ChevronDown className="size-5" />
-						</span>
-					</summary>
-
-					<div className="border-t border-gray-200 bg-white grid grid-cols-2 px-3">
-						{["asc", "desc"].map((order) => (
-							<div className="flex" key={order}>
-								<input
-									type="radio"
-									name="orderType"
-									checked={order == filter?.orderType}
-									value={order}
-									onChange={(e) => {
-										setFilter({ ...filter, orderType: e.target.value });
-									}}
-									id={order}
-								/>
-								<label className="flex items-center gap-2 p-4" htmlFor={order}>
-									<span>{order == "asc" ? "Tăng dần" : "Giảm dần"}</span>
-								</label>
-							</div>
-						))}
-					</div>
-				</details>
+		<div className="w-full lg:w-72 bg-white rounded-xl shadow-sm p-4 h-fit space-y-2">
+			<div className="mb-6 flex items-center justify-between">
+				<h3 className="text-lg font-semibold">Bộ lọc</h3>
 				<Button
-					className="bg-blue-500 w-full"
-					onClick={async () => {
-						await onFilter({
-							...filter,
-							...(searchParams.get("q") ? { apart_title_like: `${searchParams.get("q")}` } : {}),
+					variant="ghost"
+					size="sm"
+					onClick={() => {
+						setFilter({
+							page: filter.page ?? 1,
+							limit: filter.limit ?? 10,
+							orderType: filter.orderType ?? "desc",
 						});
 					}}
+					className="h-8 text-muted-foreground hover:bg-rose-400 hover:text-white"
 				>
-					Tìm kiếm
+					<X className="mr-1 h-4 w-4" />
+					Xóa bộ lọc
 				</Button>
-
-				<a href="/" className="block">
-					<Button className="w-full mb-3">Xóa bộ lọc</Button>
-				</a>
-			</details>
+			</div>
+			{rangeAttributes.map((item) => (
+				<RangeComponent
+					key={item.attribute}
+					label={item.label}
+					setFilters={setFilter}
+					attribute={item.attribute}
+					unit={item.unit}
+					filters={filter}
+					range={item.range}
+					step={item.step}
+					format={item.format}
+					toNumber={item.toNumber}
+				/>
+			))}
+			<SelectAddressComponent filter={filter} setFilter={setFilter} />
+			{selectAttributes.map((item) => (
+				<SelectComponent
+					key={item.attribute}
+					label={item.label}
+					attribute={item.attribute}
+					displayName={item.displayName}
+					filter={filter}
+					setFilter={setFilter}
+					options={item.options}
+					unit={item.unit}
+				></SelectComponent>
+			))}
+			<div className="items-top flex space-x-2">
+				<Checkbox
+					id="terms1"
+					onCheckedChange={(checked) => {
+						if (!checked) delete filter.apart_status;
+						setFilter({
+							...filter,
+							...(checked ? { apart_status: ENUM_STATUS_APARTMENT.IS_VERIFIED } : {}),
+						});
+					}}
+					checked={filter.apart_status ?? false}
+				/>
+				<div className="grid gap-1.5 leading-none">
+					<Label
+						htmlFor="terms1"
+						className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+					>
+						Chỉ hiện thị tin được xác thực
+					</Label>
+				</div>
+			</div>
+			<Button
+				className="mt-4 w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 border-0"
+				onClick={async () => {
+					await onFilter({
+						...handleClearFilter(filter),
+						...(searchParams.get("q") ? { apart_title_like: `${searchParams.get("q")}` } : {}),
+					});
+				}}
+			>
+				Tìm kiếm
+			</Button>
 		</div>
 	);
 };

@@ -82,7 +82,6 @@ function AmountComponent({ config, currentPriority, duration, endDate, priority 
 	);
 }
 export default function DialogBoosted({ config, endDate, currentPriority, apart_id }) {
-
 	const [open, setOpen] = useState(false);
 	const [priority, setPriority] = useState(0);
 	const [duration, setDuration] = useState([1]);
@@ -92,7 +91,7 @@ export default function DialogBoosted({ config, endDate, currentPriority, apart_
 			priority,
 			duration: duration[0],
 		});
-		if (response.status === 200) {
+		if (response?.status === 200) {
 			window.open(response.metadata.data.payment_url, "_self");
 		}
 		setOpen(false);
@@ -100,7 +99,7 @@ export default function DialogBoosted({ config, endDate, currentPriority, apart_
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button variant="default" className="bg-green-500">
+				<Button variant="default" className="bg-[#8B5CF6] ">
 					Đẩy tin
 				</Button>
 			</DialogTrigger>
@@ -189,10 +188,15 @@ export default function DialogBoosted({ config, endDate, currentPriority, apart_
 							</div>
 							<Slider
 								id="duration"
+								className="py-4"
+								thumbClassName="h-5 w-5 bg-white border-2 border-rose-500 shadow-md hover:border-rose-600"
+								trackClassName="h-2 bg-gray-100"
+								rangeClassName="h-2 bg-rose-500"
 								value={duration}
 								min={1}
 								max={60}
 								step={1}
+								defaultValue={[1]}
 								onValueChange={setDuration}
 							/>
 							<div className="flex justify-between text-xs text-muted-foreground">

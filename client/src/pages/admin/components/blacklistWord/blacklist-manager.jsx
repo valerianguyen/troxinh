@@ -29,7 +29,7 @@ export function BlacklistManager() {
 	useEffect(() => {
 		const fetchData = async () => {
 			const response = await BlacklistWordApi.getBlacklistWord();
-			if (response.status === 200) {
+			if (response?.status === 200) {
 				setBlacklistData(response.metadata.data);
 			}
 		};
@@ -37,7 +37,7 @@ export function BlacklistManager() {
 	}, []);
 	const addWord = async (words) => {
 		const response = await BlacklistWordApi.addBlacklistWord(words.join(","));
-		if (response.status === 201) {
+		if (response?.status === 201) {
 			setBlacklistData([...response.metadata.data]);
 		}
 		setIsAddingWord(false);
@@ -45,20 +45,20 @@ export function BlacklistManager() {
 
 	const removeWord = async (word) => {
 		const response = await BlacklistWordApi.deleteBlacklistWord(word);
-		if (response.status === 201) {
+		if (response?.status === 201) {
 			setBlacklistData(response.metadata.data);
 		}
 	};
 
 	const removeMultipleWords = async (words) => {
 		const response = await BlacklistWordApi.deleteBlacklistWord(words.join(","));
-		if (response.status === 201) {
+		if (response?.status === 201) {
 			setBlacklistData(response.metadata.data);
 		}
 	};
 
 	return (
-		<Card className="max-w-4xl mx-auto container">
+		<Card className="h-full overflow-auto border-none">
 			<CardHeader>
 				<CardTitle>Quản lý từ cấm</CardTitle>
 				<CardDescription>Quản lý danh sách từ cấm được sử dụng trong hệ thống</CardDescription>

@@ -101,14 +101,14 @@ class ApartmentController {
 	static async blockApartment(req, res) {
 		const { apart_id, userId } = req.params;
 		const { reason } = req.body;
-		if (!apart_id) {
-			throw new BadRequestError("Thiếu một số trường quan trọng");
-		}
-		if (isNaN(apart_id)) {
-			throw new BadRequestError("Tham số không đúng");
-		}
 		return new SUCCESS({
 			metadata: await ApartmentService.blockApartment(apart_id, userId, reason),
+		}).send(res);
+	}
+	static async unBlockApartment(req, res) {
+		const { apart_id, userId } = req.params;
+		return new SUCCESS({
+			metadata: await ApartmentService.unBlockApartment(apart_id, userId),
 		}).send(res);
 	}
 	static async boostApartment(req, res) {
@@ -129,9 +129,39 @@ class ApartmentController {
 			}),
 		}).send(res);
 	}
+	static async payApartment(req, res) {
+		const { apart_id } = req.params;
+		const { userId } = req.user;
+		return new SUCCESS({
+			metadata: await ApartmentService.payApartment({
+				apart_id,
+				userId,
+				ip_address:
+					req.headers["x-forwarded-for"] ||
+					req.connection.remoteAddress ||
+					req.socket.remoteAddress ||
+					req.connection.socket.remoteAddress,
+			}),
+		}).send(res);
+	}
 	static async getConfigAmountPriority(req, res) {
 		return new SUCCESS({
 			metadata: await ApartmentService.getConfigAmountPriority(),
+		}).send(res);
+	}
+	static async verifyApartment(req, res) {
+		const { apart_id } = req.params;
+		const { userId } = req.user;
+		return new SUCCESS({
+			metadata: await ApartmentService.verifyApartment({
+				apart_id,
+				userId,
+				ip_address:
+					req.headers["x-forwarded-for"] ||
+					req.connection.remoteAddress ||
+					req.socket.remoteAddress ||
+					req.connection.socket.remoteAddress,
+			}),
 		}).send(res);
 	}
 }

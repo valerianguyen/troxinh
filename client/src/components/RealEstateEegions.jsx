@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from 'react';
 
 import {
@@ -54,8 +52,7 @@ export function RealEstateRegions({ filter, handleFilter }) {
 		{
 			id: "79",
 			name: "Tp Hồ Chí Minh",
-			image:
-				"/city/hcm-1.jpg",
+			image: "/city/hcm-1.jpg",
 			size: "large",
 		},
 		{
@@ -84,6 +81,20 @@ export function RealEstateRegions({ filter, handleFilter }) {
 		<div className="w-full mt-10">
 			<h2 className="text-xl font-medium text-gray-900 mb-4">Bất động sản theo khu vực</h2>
 			<div className="mt-4">
+				<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+					{regions.map((region) => (
+						<RegionCard
+							key={region.id}
+							name={region.name}
+							image={region.image}
+							size={region.size}
+							onClick={() => {
+								handleFilter({ ...filter, apart_city: parseInt(region.id) });
+							}}
+						/>
+					))}
+				</div>
+				<h2 className="text-xl font-medium text-gray-900 my-6">Khám phá bất động sản</h2>
 				<div className="flex flex-wrap gap-2 mb-6 bg-white p-3 rounded-lg">
 					<PropertyType
 						active={activePropertyType === -1}
@@ -106,20 +117,6 @@ export function RealEstateRegions({ filter, handleFilter }) {
 						>
 							{ENUM_STRING_APARTMENT_CATEGORIES[key]}
 						</PropertyType>
-					))}
-				</div>
-
-				<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-					{regions.map((region) => (
-						<RegionCard
-							key={region.id}
-							name={region.name}
-							image={region.image}
-							size={region.size}
-							onClick={() => {
-								handleFilter({ ...filter, apart_city: parseInt(region.id) });
-							}}
-						/>
 					))}
 				</div>
 			</div>
